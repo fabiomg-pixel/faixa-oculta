@@ -671,6 +671,10 @@ dialog.texto.ida-dlg { width: min(640px, calc(100% - 24px)); }
 .d-nota { min-width: 0; }
 .d-nota h3 { margin: var(--sp-1) 0 var(--sp-1); font: 900 var(--fs-d4)/.95 var(--f-display); font-stretch: 62%; text-wrap: balance; }
 .d-nota > p { margin: 0 0 var(--sp-2); font-size: var(--fs-m); line-height: 1.55; }
+.d-cob, .d-ana { margin: var(--sp-2) 0; }
+.d-cob h4, .d-ana h4 { margin: 0 0 4px; font: 500 var(--fs-xs) var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--sec); }
+.d-cob p, .d-ana p { margin: 0; font-size: var(--fs-s); }
+.d-ana { border-left: var(--bw-rule) solid var(--sec); padding-left: var(--sp-2); }
 .d-fontes { list-style: none; margin: var(--sp-1) 0 0; padding: 0; border-top: 1px solid var(--rule); }
 .d-fontes li { padding-block: var(--sp-1); border-bottom: 1px solid var(--rule); font-size: var(--fs-s); }
 .d-fontes a { font-weight: 600; color: var(--ink); }
@@ -1377,6 +1381,8 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
       h("span", { class: "edt" }, str(n.editoria)),
       h("h3", null, str(n.titulo)),
       h("p", null, str(n.texto)),
+      n.como_noticiaram ? h("div", { class: "d-cob" }, h("h4", { class: "mono" }, "Como os veículos noticiaram"), h("p", null, str(n.como_noticiaram))) : null,
+      n.analise ? h("div", { class: "d-ana" }, h("h4", { class: "mono" }, "Análise"), h("p", null, str(n.analise))) : null,
       n.por_que_importa ? h("p", { class: "ponte" }, h("b", null, "Por que importa: "), str(n.por_que_importa)) : null,
       arr(n.fontes).length ? h("ul", { class: "d-fontes" }, arr(n.fontes).map((f) => h("li", null,
         fonteLink(f.url, str(f.fonte)), f.perfil ? h("span", { class: "mono" }, ` · ${str(f.perfil)}`) : null,

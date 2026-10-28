@@ -30,8 +30,19 @@ O leitor é o Fabio, professor de biofísica na UFRJ, no Rio. Português do Bras
 - Cada fato precisa de fonte. Números, nomes e datas só entram se aparecerem numa fonte; quando as fontes divergem,
   diga isso ou use o número mais conservador. Se um número é de antes de um evento (pré-mercado, apuração parcial),
   diga isso no texto.
-- Para cada nota, 2 a 4 fontes de perfis diferentes (agência, jornal de centro, veículo à direita, veículo à esquerda,
-  imprensa internacional, especializado). O `enfoque` diz o que aquele veículo destacou.
+- **Grandes veículos primeiro.** Cada nota tem 3 a 5 fontes, e pelo menos 3 delas da lista abaixo, sempre que o
+  fato tiver sido coberto por eles. Portais regionais, blogs e reproduções só entram para completar, nunca no lugar.
+  - Brasil: g1, Folha de S.Paulo, Estadão, O Globo, Valor Econômico, CNN Brasil, BBC News Brasil, Agência Brasil,
+    Metrópoles, Veja, Gazeta do Povo (à direita), CartaCapital (à esquerda).
+  - Mundo: BBC, The Guardian, Al Jazeera, DW, Le Monde, CNN, AP e Reuters (via republicação quando o site bloquear).
+  - Como achar: além do WebSearch (que não indexa Estadão, BBC e Guardian), baixe com curl simples a página de seção
+    do veículo (ex.: `https://g1.globo.com/politica/`, `https://www1.folha.uol.com.br/poder/`,
+    `https://www.estadao.com.br/politica/`, `https://oglobo.globo.com/politica/`, `https://www.cnnbrasil.com.br/politica/`,
+    `https://www.theguardian.com/world`) e procure os links do assunto com grep. A Folha e O Globo costumam fechar o
+    texto: use o que a página mostrar (título, linha fina, primeiros parágrafos) e diga isso no `enfoque`.
+- Cada fonte leva `enfoque`: o que aquele veículo destacou, que palavras escolheu (fuga, saída, viagem...) e quem ouviu.
+- **Atualize antes de publicar.** Notícia em movimento muda em horas: confira a matéria mais recente de pelo menos dois
+  grandes veículos logo antes de gravar, e corrija a nota se a versão mudou.
 
 ## 3. Escrever o documento
 Confira nas páginas abertas os números e as falas de cada nota antes de gravar; o que só aparece em resumo de busca
@@ -49,6 +60,8 @@ vai atribuído ao veículo ("segundo a Reuters...").
    "editoria": "Política | Economia | Mundo | Ciência | Clima | Tecnologia | Rio | Cultura",
    "titulo": "título da nota",
    "texto": "90 a 160 palavras, só fatos com fonte",
+   "como_noticiaram": "60 a 120 palavras: como os veículos contaram o mesmo fato. Onde concordam, onde divergem (números, versões, palavras escolhidas, quem foi ouvido), o que só um deles trouxe. Nomeie os veículos.",
+   "analise": "50 a 100 palavras: a leitura da Faixa Oculta. O que o fato significa, o que ainda não se sabe, o que observar. Opinião fundamentada nos fatos da nota, sem adjetivo de torcida e sem fato novo sem fonte.",
    "por_que_importa": "1 ou 2 frases",
    "fontes": [ { "fonte": "Veículo", "perfil": "ex.: jornal de referência, centro", "enfoque": "o que destacou", "url": "https://..." } ]
   }
@@ -56,6 +69,7 @@ vai atribuído ao veículo ("segundo a Reuters...").
  "agenda": [ { "quando": "hoje, 10h", "o_que": "o que acontece" } ]
 }
 ```
+- Toda nota tem `como_noticiaram` e `analise`. Se só um veículo cobriu o fato, diga isso em `como_noticiaram`.
 - Notas: 7 a 10 de manhã, 4 a 7 à noite. Agenda com 4 a 6 itens dos próximos dias e semanas.
 - Voz: clara e direta, frases curtas. Evite travessão para apartes, "não é X, é Y", dois-pontos seguidos de revelação,
   "vale notar", "sem dúvida". Paráfrase sempre; nada copiado das fontes.
