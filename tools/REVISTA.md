@@ -42,6 +42,10 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
   Grave só temas, com peso e onde usar; nunca copie conteúdo pessoal, nomes de terceiros ou textos.
 
 ## 1. Capas e players
+- Chave do TMDB (pôsteres): antes das capas, exporte com ArtifactData get `data/users/me`, doc `segredos` (out_dir na
+  pasta temporária) e, se o repositório privado `fabiomg-pixel/faixa-oculta-estado` estiver anexado, o `segredos.json`
+  dele; rode `python3 -I tools/chave_tmdb.py <arquivos>`. Ele testa e instala a chave em `~/.tmdb_key` sem imprimi-la.
+  Nunca escreva a chave em commit, log, banco ou relatório; apague os arquivos exportados depois.
 - Filmes, séries e livros: `python3 -I tools/capas_obras.py <pasta> <lote.json>` (pôster pela Wikipedia ou iTunes, capa
   de livro pelo iTunes). Disco: iTunes Search (`https://itunes.apple.com/search?term=<artista álbum>&entity=album&country=br`),
   aceite só o resultado com mesmo artista e álbum, e troque `100x100bb` por `600x600bb` no `artworkUrl100`.

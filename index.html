@@ -1368,7 +1368,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     const corpo = !S.podeMarcar ? h("p", { class: "vazio" }, "Entre no claude.ai para guardar e ver sua fila.")
       : !lista.length ? h("p", { class: "vazio" }, "Sua fila está vazia. Toque em \"Quero ouvir\" em qualquer disco.")
       : h("div", { class: "grid" }, lista.map((a) => { const c = card(a); c.insertBefore(h("div", { class: "mono", style: "color:var(--sec)" }, a._de), c.children[1]); return c; }));
-    return h("section", { class: "secao", id: "fila" }, h("div", { class: "wrap" }, head, corpo, blocoSync()));
+    return h("section", { class: "secao", id: "fila" }, h("div", { class: "wrap" }, head, corpo, blocoSync(), blocoChaves()));
   }
 
   // ---------- Tabs: news, themes, films, books ----------
@@ -3126,6 +3126,53 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
         GH.cfg = c; try { localStorage.setItem("fo-gh", JSON.stringify(c)); } catch (e) {}
         await ghLer(); if (GH.cfg) ghGravar(false);
       } }, "Ligar"), GH.status ? h("p", { class: "mono", role: "status" }, GH.status) : null);
+  }
+  // The TMDB key (film posters), pasted by the reader. On claude.ai it goes to data/users/<uid>/segredos, private to him;
+  // on the GitHub site, with the GitHub sync on, to segredos.json in the private repo. Never into the page's code.
+  async function ghPut(caminho, obj, mensagem) {
+    const url = `https://api.github.com/repos/${GH.cfg.repo}/contents/${caminho}`;
+    let sha = null;
+    const r0 = await fetch(url, { headers: ghHead(), cache: "no-store" });
+    if (r0.ok) sha = (await r0.json()).sha;
+    else if (r0.status !== 404) throw new Error(`erro ${r0.status}`);
+    const corpo = { message: mensagem, content: b64(JSON.stringify(obj, null, 1)) };
+    if (sha) corpo.sha = sha;
+    const r = await fetch(url, { method: "PUT", headers: { ...ghHead(), "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
+    if (!r.ok) throw new Error(`erro ${r.status}`);
+  }
+  async function salvarChave(valor, msg) {
+    const k = str(valor).trim();
+    if (!/^[A-Za-z0-9._-]{20,400}$/.test(k)) { msg.textContent = "Isso não parece uma chave do TMDB. Copie de novo e tente."; return; }
+    const doc = { tmdb: k, em: new Date().toISOString() };
+    try {
+      if (S.modo === "site") {
+        if (!GH.cfg) { msg.textContent = "Neste site, ligue antes a gravação no GitHub (acima), ou faça isto pela revista no claude.ai."; return; }
+        await ghPut("segredos.json", doc, "Chave do TMDB");
+      } else {
+        if (!S.db || !S.uid) { msg.textContent = "Entre no claude.ai para salvar."; return; }
+        await S.db.doc(`data/users/${S.uid}/segredos`).set(doc);
+      }
+      msg.textContent = `Chave salva (termina em …${k.slice(-4)}). As rotinas passam a usá-la para buscar pôsteres.`;
+    } catch (e) { msg.textContent = `Não consegui salvar (${(e && e.message) || e}).`; }
+  }
+  function blocoChaves() {
+    if (!S.podeMarcar) return null;
+    const campo = h("input", { type: "password", placeholder: "API Key ou API Read Access Token do TMDB", autocomplete: "off", "aria-label": "Chave da API do TMDB", style: "width:100%;max-width:420px" });
+    const msg = h("p", { class: "mono", role: "status" });
+    const colar = async () => {
+      try {
+        const t = await navigator.clipboard.readText();
+        campo.value = str(t).trim();
+        msg.textContent = campo.value ? "Colado. Agora toque em Salvar." : "A área de transferência está vazia.";
+      } catch (e) { msg.textContent = "O navegador não deixou ler a área de transferência. Cole no campo (Ctrl+V, ou toque e segure) e toque em Salvar."; }
+    };
+    return h("details", { class: "sync-box" }, h("summary", null, "Chave do TMDB para os pôsteres de filmes"),
+      h("p", null, "Copie a chave em themoviedb.org, em Settings → API (vale a API Key ou o API Read Access Token), e toque em Colar. Ela fica guardada só para você e as rotinas a usam para buscar pôsteres."),
+      h("p", null, campo),
+      h("div", { class: "acts" },
+        h("button", { class: "ler", type: "button", onclick: colar }, "Colar"),
+        h("button", { class: "ler", type: "button", onclick: () => salvarChave(campo.value, msg) }, "Salvar")),
+      msg);
   }
   function blocoSync() {
     if (!S.podeMarcar) return null;
