@@ -1161,12 +1161,14 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
   // Stremio opens a title by its IMDb id: the app link first, the web version as a fallback (some browsers and the claude.ai frame block app links).
   function botaoStremio(a) {
     const id = str(a.imdb);
-    if (!/^tt\d{6,10}$/.test(id)) return null;
+    const ok = /^tt\d{6,10}$/.test(id);
+    const tr = a.trakt ? safeUrl(a.trakt) : "";
+    if (!ok && !tr) return null;
     const tipo = str(a.tipo) === "serie" ? "series" : "movie";
     return h("span", { class: "stremio-g" },
-      h("a", { class: "stremio", href: `stremio:///detail/${tipo}/${id}`, title: "Abrir no app do Stremio" }, "Assistir no Stremio"),
-      h("a", { class: "stremio-web", href: `https://web.stremio.com/#/detail/${tipo}/${id}`, target: "_blank", rel: "noopener", title: "Abrir no Stremio Web" }, "web"),
-      h("a", { class: "stremio-web", href: `https://trakt.tv/search/imdb/${id}`, target: "_blank", rel: "noopener", title: "Abrir no Trakt para pôr na lista (Stremio e Nuvio sincronizam com o Trakt)" }, "+ lista Trakt"));
+      ok ? h("a", { class: "stremio", href: `stremio:///detail/${tipo}/${id}`, title: "Abrir no app do Stremio" }, "Assistir no Stremio") : null,
+      ok ? h("a", { class: "stremio-web", href: `https://web.stremio.com/#/detail/${tipo}/${id}`, target: "_blank", rel: "noopener", title: "Abrir no Stremio Web" }, "web") : null,
+      tr ? h("a", { class: "stremio-web", href: tr, target: "_blank", rel: "noopener", title: "Abrir a página do título no Trakt para pôr na lista (Stremio e Nuvio sincronizam com o Trakt)" }, "+ lista Trakt") : null);
   }
   function botaoTrailer(a) {
     if (S.modo !== "site") return null;

@@ -102,7 +102,10 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
   thriller político e os livros do momento, com leitura crítica); 18 a 22 itens e 2 guias. Edição brasileira,
   editora e páginas conferidas. Campo `downloads` só com cópias gratuitas autorizadas (regra no brief); nunca acervo pirata.
 - Filmes e séries: `imdb` sempre que existir; a página põe "Assistir no Stremio" (abre a ficha, onde se adiciona à
-  biblioteca), a versão web e "+ lista Trakt" (o Trakt sincroniza com Stremio e Nuvio).
+  biblioteca), a versão web e "+ lista Trakt" (o Trakt sincroniza com Stremio e Nuvio). O link do Trakt vem do campo
+  `trakt` (trakt.tv/movies/<slug>-<ano> ou trakt.tv/shows/<slug>; a busca por IMDb dá 404 no app novo): depois de gravar
+  a edição, exporte cine_itens e cine_guias e rode `python3 -I tools/trakt_links.py <dump> <saida.json>`, que consulta o
+  TMDB e lista só o que mudou; grave com batch e `if_version`.
 - **Em profundidade.** `aprofundamento` da edição sobre o diretor (cinema) ou autor (livros) da matéria de capa (§7).
 - Commit "Cinema: edição de <mês>" ou "Livros: edição de <mês>".
 
