@@ -948,7 +948,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
   <div class="wrap">
     <div id="versoes"></div>
     <p id="rodape-fontes">Cada disco traz a fonte da informação. Capas e links via Apple Music e Spotify.</p>
-    <p>Os botões "quero ouvir" e "ouvi" ficam guardados só para você e aparecem em "Minha fila".</p>
+    <p>Os botões "quero ouvir" e "ouvi" e as avaliações 👍/👎 ficam guardados só para você e aparecem em "Minha fila". No site do GitHub, ligue a gravação no GitHub em "Minha fila" para as rotinas lerem.</p>
   </div>
 </footer>
 
@@ -3005,6 +3005,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
       S.marcas = novo; S.marcasEm = em;
       try { localStorage.setItem("fo-marcas", JSON.stringify(novo)); localStorage.setItem("fo-marcas-em", JSON.stringify(em)); } catch (e) {}
       render();
+      ghAgendar();
       return;
     }
     if (!S.db || !S.uid) return;
@@ -3019,6 +3020,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     if (S.modo === "site") {
       try { localStorage.setItem("fo-aval", JSON.stringify(novo)); localStorage.setItem("fo-aval-em", JSON.stringify(em)); } catch (e) {}
       render();
+      ghAgendar();
       return;
     }
     if (!S.db || !S.uid) return;
@@ -3027,10 +3029,25 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
   }
   // The GitHub site keeps marks and ratings in this browser only. To reach the routines they go to claude.ai:
   // the site copies a code, the claude.ai page pastes it and merges (newer timestamp wins).
-  function codigoSync() { return JSON.stringify({ fo: 1, marcas: S.marcas, marcas_em: S.marcasEm, avaliacoes: S.aval, avaliacoes_em: S.avalEm }); }
+  function estadoSync() { return { fo: 1, marcas: S.marcas, marcas_em: S.marcasEm, avaliacoes: S.aval, avaliacoes_em: S.avalEm, atualizado: new Date().toISOString() }; }
+  function codigoSync() { return JSON.stringify(estadoSync()); }
+  function salvarLocal() {
+    try {
+      localStorage.setItem("fo-marcas", JSON.stringify(S.marcas)); localStorage.setItem("fo-marcas-em", JSON.stringify(S.marcasEm));
+      localStorage.setItem("fo-aval", JSON.stringify(S.aval)); localStorage.setItem("fo-aval-em", JSON.stringify(S.avalEm));
+    } catch (e) {}
+  }
   function importarSync(txt) {
     let o; try { o = JSON.parse(txt); } catch (e) { return "Código inválido."; }
     if (!o || o.fo !== 1) return "Código inválido.";
+    mesclar(o);
+    if (S.modo === "site") return "Só funciona dentro do claude.ai.";
+    gravarEstado(); render();
+    return "Marcações e avaliações importadas.";
+  }
+  // Newer timestamp wins, key by key, so two devices (or the site and claude.ai) never erase each other's marks.
+  function mesclar(o) {
+    if (!o || typeof o !== "object") return;
     const obj = (v) => (v && typeof v === "object" && !Array.isArray(v) ? v : {});
     const juntar = (cur, curEm, nov, novEm) => {
       const out = { ...cur }, em = { ...curEm };
@@ -3041,17 +3058,68 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     };
     [S.marcas, S.marcasEm] = juntar(S.marcas, S.marcasEm, o.marcas, o.marcas_em);
     [S.aval, S.avalEm] = juntar(S.aval, S.avalEm, o.avaliacoes, o.avaliacoes_em);
-    if (S.modo === "site") return "Só funciona dentro do claude.ai.";
-    gravarEstado(); render();
-    return "Marcações e avaliações importadas.";
+  }
+  // On the GitHub site, marks and ratings are also written to estado.json in a private repo, through the GitHub API,
+  // with a fine-grained token that lives only in this browser (never in the page's code). The routines read that file.
+  const GH = { cfg: null, sha: null, timer: null, status: "" };
+  try { const c = JSON.parse(localStorage.getItem("fo-gh") || "null"); if (c && c.repo && c.token) GH.cfg = c; } catch (e) {}
+  const b64 = (s) => { let bin = ""; new TextEncoder().encode(s).forEach((x) => { bin += String.fromCharCode(x); }); return btoa(bin); };
+  const unb64 = (s) => new TextDecoder().decode(Uint8Array.from(atob(str(s).replace(/\s/g, "")), (c) => c.charCodeAt(0)));
+  const ghUrl = () => `https://api.github.com/repos/${GH.cfg.repo}/contents/estado.json`;
+  const ghHead = () => ({ Authorization: `Bearer ${GH.cfg.token}`, Accept: "application/vnd.github+json", "X-GitHub-Api-Version": "2022-11-28" });
+  const hora = () => new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
+  async function ghLer() {
+    if (S.modo !== "site" || !GH.cfg) return;
+    try {
+      const r = await fetch(ghUrl(), { headers: ghHead(), cache: "no-store" });
+      if (r.status === 404) { GH.sha = null; GH.status = "Ligado. O arquivo nasce na primeira marcação."; render(); return; }
+      if (!r.ok) throw new Error(`erro ${r.status}`);
+      const j = await r.json();
+      GH.sha = j.sha;
+      mesclar(JSON.parse(unb64(j.content)));
+      salvarLocal();
+      GH.status = `Sincronizado com o GitHub às ${hora()}.`;
+    } catch (e) { GH.status = `Não consegui ler do GitHub (${e.message}). Confira o repositório e o token.`; }
+    render();
+  }
+  function ghAgendar() { if (S.modo !== "site" || !GH.cfg) return; clearTimeout(GH.timer); GH.timer = setTimeout(() => ghGravar(false), 2500); }
+  async function ghGravar(repetiu) {
+    if (!GH.cfg) return;
+    const corpo = { message: "Marcações e avaliações da revista", content: b64(JSON.stringify(estadoSync(), null, 1)) };
+    if (GH.sha) corpo.sha = GH.sha;
+    try {
+      const r = await fetch(ghUrl(), { method: "PUT", headers: { ...ghHead(), "Content-Type": "application/json" }, body: JSON.stringify(corpo) });
+      if ((r.status === 409 || r.status === 422) && !repetiu) { await ghLer(); return ghGravar(true); }
+      if (!r.ok) throw new Error(`erro ${r.status}`);
+      GH.sha = (await r.json()).content.sha;
+      GH.status = `Gravado no GitHub às ${hora()}.`;
+    } catch (e) { GH.status = `Não consegui gravar no GitHub (${e.message}). As marcações continuam neste navegador.`; }
+    render();
+  }
+  function blocoGitHub() {
+    if (S.modo !== "site") return null;
+    if (GH.cfg) return h("div", { class: "sync-box" }, h("p", null, h("b", null, "Gravando no GitHub: "), str(GH.cfg.repo), ". ", GH.status),
+      h("div", { class: "acts" }, h("button", { class: "ler", type: "button", onclick: () => ghLer() }, "Sincronizar agora"),
+        h("button", { class: "ler", type: "button", onclick: () => { try { localStorage.removeItem("fo-gh"); } catch (e) {} GH.cfg = null; GH.sha = null; GH.status = ""; render(); } }, "Desligar neste navegador")));
+    const repo = h("input", { type: "text", value: "fabiomg-pixel/faixa-oculta-estado", "aria-label": "Repositório (dono/nome)", style: "width:100%;max-width:420px" });
+    const tok = h("input", { type: "password", placeholder: "github_pat_…", "aria-label": "Token do GitHub", autocomplete: "off", style: "width:100%;max-width:420px" });
+    return h("details", { class: "sync-box", open: !!GH.status || null }, h("summary", null, "Gravar marcações e avaliações no GitHub (para as rotinas lerem)"),
+      h("p", null, "Use um repositório privado só para isso e um token fine-grained com acesso apenas a ele (Contents: read and write). O token fica guardado só neste navegador."),
+      h("p", null, repo), h("p", null, tok),
+      h("button", { class: "ler", type: "button", onclick: async () => {
+        const c = { repo: str(repo.value).trim(), token: str(tok.value).trim() };
+        if (!/^[\w.-]+\/[\w.-]+$/.test(c.repo) || c.token.length < 20) { GH.status = "Preencha o repositório (dono/nome) e o token."; render(); return; }
+        GH.cfg = c; try { localStorage.setItem("fo-gh", JSON.stringify(c)); } catch (e) {}
+        await ghLer(); if (GH.cfg) ghGravar(false);
+      } }, "Ligar"), GH.status ? h("p", { class: "mono", role: "status" }, GH.status) : null);
   }
   function blocoSync() {
     if (!S.podeMarcar) return null;
     if (S.modo === "site") {
       const n = Object.keys(S.aval).length + Object.keys(S.marcas).length;
-      return h("details", { class: "sync-box" }, h("summary", null, "Levar marcações e avaliações deste navegador para o claude.ai"),
+      return h("div", null, blocoGitHub(), h("details", { class: "sync-box" }, h("summary", null, "Levar marcações e avaliações deste navegador para o claude.ai"),
         h("p", null, `Neste site elas ficam só neste navegador (${n} agora). Para a revista aprender com elas, copie o código e cole na mesma área da revista no claude.ai.`),
-        h("button", { class: "ler", type: "button", onclick: (e) => { const t = codigoSync(); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { e.target.textContent = "Código copiado"; }, () => { window.prompt("Copie o código:", t); }); } }, "Copiar código"));
+        h("button", { class: "ler", type: "button", onclick: (e) => { const t = codigoSync(); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { e.target.textContent = "Código copiado"; }, () => { window.prompt("Copie o código:", t); }); } }, "Copiar código")));
     }
     const ta = h("textarea", { "aria-label": "Código copiado do site" });
     const msg = h("p", { class: "mono", role: "status" });
@@ -3142,6 +3210,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
       S.aval = lerLS("fo-aval", {}); S.avalEm = lerLS("fo-aval-em", {});
     } catch (e) { S.falhou = true; }
     render();
+    if (GH.cfg) ghLer();
   }
 
   (async () => {

@@ -32,7 +32,7 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
   `python3 -I -m json.tool` antes.
 - Nunca escreva em `data/users/`, e nunca crie, altere ou apague idas, notas ou o perfil do Radar por conta própria.
 - Commits terminam com `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
-- **Gosto do leitor, antes de escolher.** Leia (só leitura) `data/users/me/estado` (campos `avaliacoes` 👍 `up` / 👎 `down`
+- **Gosto do leitor, antes de escolher.** Leia (só leitura) o estado do leitor, juntando `data/users/me/estado` do artefato e o `estado.json` do repositório privado `fabiomg-pixel/faixa-oculta-estado` com `tools/juntar_estado.py` (passo 3b2 do PUBLICAR) (campos `avaliacoes` 👍 `up` / 👎 `down`
   e `marcas` quero/ouvi, com as chaves = ids de itens, `<guia>~<índice>` ou `nota:<dia>:<id da nota>`) e
   `perfil_leitor/interesses` (temas tirados da Agenda, do Gmail, do Drive e do Spotify). 👍 puxa mais do mesmo artista,
   gênero, diretor, autor ou tema; 👎 afasta. Avaliação vale mais que o perfil. Diga no relatório quantas avaliações leu.

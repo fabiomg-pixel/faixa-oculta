@@ -20,7 +20,7 @@ O leitor é o Fabio, professor de biofísica na UFRJ, no Rio. Português do Bras
 - Leia as edições anteriores para continuar as histórias e não repetir notas sem novidade.
 
 ## 1b. O que o leitor quer
-- Leia (só leitura) `perfil_leitor/interesses` e, em `data/users/me/estado`, as `avaliacoes` com chave `nota:...` (👍 `up`
+- Leia (só leitura) `perfil_leitor/interesses` e, no estado do leitor (artefato + `estado.json` do repositório privado `fabiomg-pixel/faixa-oculta-estado`, juntos por `tools/juntar_estado.py`), as `avaliacoes` com chave `nota:...` (👍 `up`
   ou 👎 `down` em notas de boletins anteriores). Temas com 👍 e os de peso alto no perfil (parasitologia e doenças
   tropicais, biologia celular e microscopia, financiamento e política científica, UFRJ e universidade pública) ganham
   prioridade quando houver notícia do dia; temas com 👎 só entram se forem grandes. Pelo menos uma nota de Ciência por
