@@ -270,9 +270,10 @@ for a in obras:
         url, fonte = busca(a)
         if url and baixar(url, fn):
             fontes[fn] = fonte
-            print("OK  ", fn, "<=", fonte)
+            json.dump(fontes, open(fontes_fn, "w"), ensure_ascii=False, indent=1)
+            print("OK  ", fn, "<=", fonte, flush=True)
             ok = True
             break
     if not ok:
-        print("MISS", fn, "|", a.get("titulo"), "|", a.get("autor"))
+        print("MISS", fn, "|", a.get("titulo"), "|", a.get("autor"), flush=True)
 json.dump(fontes, open(fontes_fn, "w"), ensure_ascii=False, indent=1)
