@@ -19,6 +19,13 @@ O leitor é o Fabio, professor de biofísica na UFRJ, no Rio. Português do Bras
   com out_dir. Se a edição desta rodada já existir, não reescreva: pule para o passo 4 só se o site estiver atrás.
 - Leia as edições anteriores para continuar as histórias e não repetir notas sem novidade.
 
+## 1b. O que o leitor quer
+- Leia (só leitura) `perfil_leitor/interesses` e, em `data/users/me/estado`, as `avaliacoes` com chave `nota:...` (👍 `up`
+  ou 👎 `down` em notas de boletins anteriores). Temas com 👍 e os de peso alto no perfil (parasitologia e doenças
+  tropicais, biologia celular e microscopia, financiamento e política científica, UFRJ e universidade pública) ganham
+  prioridade quando houver notícia do dia; temas com 👎 só entram se forem grandes. Pelo menos uma nota de Ciência por
+  edição da manhã quando houver fato novo nesses temas.
+
 ## 2. Apurar
 - Use WebSearch (mode "extended" para os temas centrais, "standard" para checagens) para achar as matérias e
   WebFetch para abrir as principais e conferir números e falas. Se o WebFetch der erro de DNS (já aconteceu nesta

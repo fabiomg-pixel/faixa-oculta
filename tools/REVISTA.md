@@ -32,6 +32,14 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
   `python3 -I -m json.tool` antes.
 - Nunca escreva em `data/users/`, e nunca crie, altere ou apague idas, notas ou o perfil do Radar por conta própria.
 - Commits terminam com `Co-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>`.
+- **Gosto do leitor, antes de escolher.** Leia (só leitura) `data/users/me/estado` (campos `avaliacoes` 👍 `up` / 👎 `down`
+  e `marcas` quero/ouvi, com as chaves = ids de itens, `<guia>~<índice>` ou `nota:<dia>:<id da nota>`) e
+  `perfil_leitor/interesses` (temas tirados da Agenda, do Gmail, do Drive e do Spotify). 👍 puxa mais do mesmo artista,
+  gênero, diretor, autor ou tema; 👎 afasta. Avaliação vale mais que o perfil. Diga no relatório quantas avaliações leu.
+- **Perfil de interesses (dia 1).** Uma vez por mês, na rotina de música, refaça `perfil_leitor/interesses`: títulos de
+  eventos da Agenda Google dos próximos 45 dias, remetentes de newsletters do Gmail (60 dias, só metadados), títulos de
+  arquivos recentes do Drive e, se houver pasta do computador ligada por Remote Control, nomes de pastas e arquivos.
+  Grave só temas, com peso e onde usar; nunca copie conteúdo pessoal, nomes de terceiros ou textos.
 
 ## 1. Capas e players
 - Filmes, séries e livros: `python3 -I tools/capas_obras.py <pasta> <lote.json>` (pôster pela Wikipedia ou iTunes, capa
@@ -72,6 +80,12 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
   que entrou.
 - Playlist do mês: conector Spotify, generate_playlist "Faixa Oculta nº N · <Mês> AAAA" com as faixas recomendadas dos
   itens, na ordem da revista; grave `playlist` {nome, url}. Se falhar, deixe de fora e registre.
+- **Playlist com os discos inteiros.** Além da playlist de faixas, crie no conector Spotify (generate_playlist) "Faixa
+  Oculta nº N · <Mês> AAAA · Álbuns Completos", pedindo todas as faixas de todos os discos com player, na ordem da revista
+  (capa, seções, guias). O conector não deixa conferir o conteúdo: grave `playlist` {nome, url} com ela e guarde a de faixas
+  em `playlist_anterior`. No site, o botão "Ouvir a edição inteira" toca os discos em sequência pelo YouTube Music e é o
+  caminho garantido; ele usa os `youtube_list`, então confira que todo disco com player tem um.
+- **Em profundidade.** Faça o campo `aprofundamento` da edição sobre o artista por trás da matéria de capa (ver §7).
 - Commit "Música: edição de <mês>".
 
 ## 4. Cinema do mês (dia 3) e Livros do mês (dia 5)
@@ -81,6 +95,9 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
   semana da rodada.
 - Livros, seções: `lancamentos`, `brasil`, `ideias` (não ficção), `achados`; 15 a 18 itens e 2 guias. Edição brasileira,
   editora e páginas conferidas. Campo `downloads` só com cópias gratuitas autorizadas (regra no brief); nunca acervo pirata.
+- Filmes e séries: `imdb` sempre que existir; a página põe "Assistir no Stremio" (abre a ficha, onde se adiciona à
+  biblioteca), a versão web e "+ lista Trakt" (o Trakt sincroniza com Stremio e Nuvio).
+- **Em profundidade.** `aprofundamento` da edição sobre o diretor (cinema) ou autor (livros) da matéria de capa (§7).
 - Commit "Cinema: edição de <mês>" ou "Livros: edição de <mês>".
 
 ## 5. Complemento quinzenal (dia 15)
@@ -93,3 +110,20 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
 Siga `tools/PUBLICAR.md` inteiro (inclui a ponte com o Radar e as capas novas em `$T/assets`). Depois do push, confira
 o `data/revista.json` do site. Relatório curto: o que entrou (quantos itens e guias, títulos dos guias), o que ficou sem
 confirmação e por quê, e o hash do commit.
+
+## 7. Em profundidade (música, cinema e livros, todo mês)
+Um texto longo sobre o artista por trás da matéria de capa do mês: o músico ou banda, o diretor, o autor. Fica no
+documento da edição (`edicoes`, `cine_edicoes` ou `livro_edicoes`), campo `aprofundamento`:
+```json
+{ "titulo": "...", "sobre": "nome do artista", "linha_fina": "1 ou 2 frases",
+  "texto": ["4 a 6 parágrafos, 300 a 500 palavras: origem, formação, como o estilo se formou, fases da obra, onde a obra do mês entra"],
+  "mais_da_obra": [ { "titulo": "obra (com o grupo, se for o caso)", "ano": "AAAA", "nota": "1 ou 2 frases" } ],
+  "influenciados": [ { "artista": "...", "obra": "...", "ano": "AAAA", "como": "a ligação concreta: produziu, tocou, gravou no mesmo lugar, citou como influência numa entrevista..." } ],
+  "fontes": [ { "fonte": "...", "url": "..." } ] }
+```
+- 5 a 7 obras em `mais_da_obra` (fora a do mês) e 4 a 6 em `influenciados`. A influência precisa de ligação documentada
+  (colaboração, produção, declaração do próprio artista, crítica que a aponte); nada de "soa parecido" sem fonte.
+- Pesquise: Wikipedia (`curl -sL "https://en.wikipedia.org/w/index.php?title=<Página>&action=raw"`, ou pt.), entrevistas e
+  críticas. Todo fato com fonte listada; o que não se confirmou sai. Paráfrase; no máximo uma citação curta.
+- Grave com ArtifactData "update" no documento da edição (com `if_version`). A página desenha o bloco depois da capa e
+  põe "Em profundidade" no sumário.

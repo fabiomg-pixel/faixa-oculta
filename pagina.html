@@ -876,6 +876,27 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
   .card, .tracks li { animation: in .4s ease both; }
   @keyframes in { from { transform: translateY(6px); } to { transform: none; } }
 }
+.rate { display: inline-flex; gap: 4px; }
+.rate button { border: var(--bw) solid var(--rule); background: transparent; border-radius: var(--pill); padding: 4px 9px; font: 500 13px/1 var(--f-mono); cursor: pointer; color: var(--muted); }
+.rate button[aria-pressed="true"][data-v="up"] { background: var(--sec-f, var(--ink)); color: var(--on-sec, var(--paper)); border-color: transparent; }
+.rate button[aria-pressed="true"][data-v="down"] { background: var(--muted); color: var(--paper); border-color: transparent; }
+.rate button:disabled { opacity: .45; cursor: default; }
+.rate button:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+.d-rate { margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; font: 500 var(--fs-xs) var(--f-mono); color: var(--muted); }
+.b-ouvir { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; }
+.prof { padding-block: calc(var(--sp-4) * 1.5); border-top: var(--bw) solid var(--rule); }
+.prof .p-cols { display: grid; gap: calc(var(--sp-4) * 1.2); grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); margin-top: var(--sp-2); }
+@media (max-width: 900px) { .prof .p-cols { grid-template-columns: 1fr; } }
+.prof .p-linha { font-size: var(--fs-s); color: var(--muted); max-width: 68ch; margin: 0; }
+.prof .p-txt p { margin: 0 0 1em; max-width: 68ch; }
+.prof ul { list-style: none; padding: 0; margin: 0 0 var(--sp-3); }
+.prof li { padding: 9px 0; border-bottom: var(--bw) solid var(--rule); }
+.prof li b { display: block; }
+.prof li small { display: block; color: var(--muted); margin-top: 2px; }
+.prof h4 { font: 500 var(--fs-xs) var(--f-mono); text-transform: uppercase; letter-spacing: .06em; color: var(--sec); margin: 0 0 6px; }
+.prof .p-fontes { font-size: var(--fs-xs); color: var(--muted); }
+.sync-box { margin-top: var(--sp-3); font-size: var(--fs-s); }
+.sync-box textarea { width: 100%; min-height: 70px; font: 12px var(--f-mono); }
 </style>
 
 <header class="mast">
@@ -913,6 +934,8 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
       <span class="dock-capa" id="dock-capa" aria-hidden="true"></span>
       <span class="dock-txt"><span class="dock-fonte" id="dock-fonte">Tocando</span><span class="tocando" id="dock-tocando"></span></span>
       <span class="dock-acoes">
+        <button class="dock-btn" type="button" id="dock-ant" hidden aria-label="Disco anterior da fila" title="Disco anterior">‹</button>
+        <button class="dock-btn" type="button" id="dock-prox" hidden aria-label="Próximo disco da fila" title="Próximo disco">›</button>
         <button class="dock-btn" type="button" id="dock-tam" aria-label="Ver faixas" title="Ver faixas">↕</button>
         <button class="dock-btn" type="button" id="dock-fechar" aria-label="Fechar o player" title="Fechar">×</button>
       </span>
@@ -966,7 +989,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     },
   };
   const COLS_REV = ["cine_edicoes", "cine_itens", "cine_guias", "livro_edicoes", "livro_itens", "livro_guias", "leituras"];
-  const S = { db: null, uid: null, edicoes: [], itens: [], guias: [], semanas: [], cultura: [], dias: [], cine_edicoes: [], cine_itens: [], cine_guias: [], livro_edicoes: [], livro_itens: [], livro_guias: [], leituras: [], selRev: {}, agenda: null, agQuando: "mes", agOnde: "todos", agTipo: "todos", agQ: "", agAbertos: {}, agRasc: {}, agNota: null, agDispOpen: false, agInfo: {}, agPlInfo: false, agArtistas: {}, agArtistasYT: {}, comentarios: {}, marcasEm: {}, idasMod: {}, idasDel: {}, notasNovas: [], fIda: { ano: String(new Date().getFullYear()), tipo: "todos" }, notaMsg: "", loaded: {}, marcas: {}, sel: null, selSem: null, selDia: null, aba: "hoje", filtro: "tudo", podeMarcar: false, falhou: false };
+  const S = { db: null, uid: null, edicoes: [], itens: [], guias: [], semanas: [], cultura: [], dias: [], cine_edicoes: [], cine_itens: [], cine_guias: [], livro_edicoes: [], livro_itens: [], livro_guias: [], leituras: [], selRev: {}, agenda: null, agQuando: "mes", agOnde: "todos", agTipo: "todos", agQ: "", agAbertos: {}, agRasc: {}, agNota: null, agDispOpen: false, agInfo: {}, agPlInfo: false, agArtistas: {}, agArtistasYT: {}, comentarios: {}, marcasEm: {}, idasMod: {}, idasDel: {}, notasNovas: [], fIda: { ano: String(new Date().getFullYear()), tipo: "todos" }, notaMsg: "", loaded: {}, marcas: {}, aval: {}, avalEm: {}, sel: null, selSem: null, selDia: null, aba: "hoje", filtro: "tudo", podeMarcar: false, falhou: false };
   const ABAS = [["hoje", "hoje"], ["noticias", "semana"], ["musica", "música"], ["filmes", "filmes"], ["livros", "livros"], ["agenda", "agenda"], ["arquivo", "arquivo"]];
   const DSEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
@@ -1036,6 +1059,10 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     document.body.classList.toggle("player-grande", !!tocando.url && tocando.grande && !tocando.video);
     document.body.classList.toggle("player-video", !!tocando.url && !!tocando.video);
     dock.hidden = !tocando.url;
+    const emFila = !!tocando.url && fila.lista.length > 0;
+    const ant = document.getElementById("dock-ant"), prox = document.getElementById("dock-prox");
+    ant.hidden = prox.hidden = !emFila;
+    ant.disabled = fila.i <= 0; prox.disabled = fila.i >= fila.lista.length - 1;
     const tam = document.getElementById("dock-tam");
     tam.hidden = !!tocando.video;
     tam.setAttribute("aria-label", tocando.grande ? "Compactar" : "Ver faixas");
@@ -1046,6 +1073,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     if (!url) return;
     const box = document.getElementById("dock-frame");
     if (tocando.url !== url) {
+      pararFila();
       tocando.url = url;
       tocando.video = !!video || /list=/.test(url);
       video = tocando.video;
@@ -1068,6 +1096,67 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     render();
   }
   function ouvir(a) { tocar(embedUrl(a), str(a.exibir_artista || a.artista), str(a.album), false, a); }
+  // "Ouvir a edição inteira": every album with a YouTube Music playlist, in magazine order, one after the other.
+  // The YouTube IFrame API tells when an album's last track ends; then the next album loads. Site only.
+  const fila = { lista: [], i: -1, yt: null };
+  let ytApi = null;
+  function carregarYT() {
+    if (ytApi) return ytApi;
+    ytApi = new Promise((ok, erro) => {
+      if (window.YT && window.YT.Player) return ok();
+      const antes = window.onYouTubeIframeAPIReady;
+      window.onYouTubeIframeAPIReady = () => { if (antes) antes(); ok(); };
+      const s = document.createElement("script");
+      s.src = "https://www.youtube.com/iframe_api";
+      s.onerror = () => { ytApi = null; erro(); };
+      document.head.append(s);
+    });
+    return ytApi;
+  }
+  function pararFila() { if (fila.yt) { try { fila.yt.destroy(); } catch (e) {} } fila.yt = null; fila.lista = []; fila.i = -1; }
+  function tocarFila(lista, i) {
+    if (!lista.length) return;
+    i = Math.max(0, Math.min(i, lista.length - 1));
+    if (fila.yt) { try { fila.yt.destroy(); } catch (e) {} fila.yt = null; }
+    fila.lista = lista; fila.i = i;
+    const a = lista[i], lid = ytLista(a);
+    tocando.url = `fila:${i}:${lid}`; tocando.video = true; tocando.grande = false;
+    document.getElementById("dock-fonte").textContent = `YouTube Music · disco ${i + 1} de ${lista.length}`;
+    const cx = document.getElementById("dock-capa");
+    cx.replaceChildren(capa(a)); cx.hidden = false;
+    document.getElementById("dock-tocando").replaceChildren(document.createTextNode(str(a.exibir_artista || a.artista)), h("em", null, str(a.album)));
+    const box = document.getElementById("dock-frame");
+    const alvo = document.createElement("div");
+    box.replaceChildren(alvo);
+    const simples = () => {
+      const f = document.createElement("iframe");
+      f.src = embedUrl(a); f.className = "video"; f.title = `Player: ${str(a.album)}`;
+      f.allow = "autoplay *; encrypted-media *; fullscreen; picture-in-picture";
+      box.replaceChildren(f);
+    };
+    carregarYT().then(() => {
+      if (fila.lista !== lista || fila.i !== i) return;
+      fila.yt = new window.YT.Player(alvo, {
+        host: "https://www.youtube-nocookie.com", width: "100%", height: "100%",
+        playerVars: { listType: "playlist", list: lid, autoplay: 1, rel: 0, playsinline: 1 },
+        events: {
+          onReady: (e) => { const f = e.target.getIframe(); if (f) { f.className = "video"; f.title = `Player: ${str(a.album)}`; } },
+          onStateChange: (e) => { if (e.data === 0) { const p = e.target, pl = p.getPlaylist() || []; if (p.getPlaylistIndex() >= pl.length - 1) proxFila(1); } },
+          onError: (e) => { const p = e.target, pl = p.getPlaylist() || []; if (pl.length && p.getPlaylistIndex() < pl.length - 1) p.nextVideo(); else proxFila(1); },
+        },
+      });
+    }, simples);
+    desenharPlayer();
+    render();
+  }
+  function proxFila(d) { const j = fila.i + d; if (fila.lista.length && j >= 0 && j < fila.lista.length) tocarFila(fila.lista, j); }
+  function botaoOuvirTudo(lista) {
+    lista = lista.filter((a) => ytLista(a));
+    if (S.modo !== "site" || lista.length < 2) return null;
+    const ativo = fila.lista.length > 0 && !!tocando.url && str(tocando.url).startsWith("fila:");
+    return h("button", { class: "ouvir", type: "button", "aria-pressed": String(ativo), onclick: () => tocarFila(lista, 0) },
+      ativo ? "Tocando a edição" : "Ouvir a edição inteira", h("small", { class: "ouvir-fonte" }, `${lista.length} discos em sequência`));
+  }
   // Stremio opens a title by its IMDb id: the app link first, the web version as a fallback (some browsers and the claude.ai frame block app links).
   function botaoStremio(a) {
     const id = str(a.imdb);
@@ -1075,7 +1164,8 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     const tipo = str(a.tipo) === "serie" ? "series" : "movie";
     return h("span", { class: "stremio-g" },
       h("a", { class: "stremio", href: `stremio:///detail/${tipo}/${id}`, title: "Abrir no app do Stremio" }, "Assistir no Stremio"),
-      h("a", { class: "stremio-web", href: `https://web.stremio.com/#/detail/${tipo}/${id}`, target: "_blank", rel: "noopener", title: "Abrir no Stremio Web" }, "web"));
+      h("a", { class: "stremio-web", href: `https://web.stremio.com/#/detail/${tipo}/${id}`, target: "_blank", rel: "noopener", title: "Abrir no Stremio Web" }, "web"),
+      h("a", { class: "stremio-web", href: `https://trakt.tv/search/imdb/${id}`, target: "_blank", rel: "noopener", title: "Abrir no Trakt para pôr na lista (Stremio e Nuvio sincronizam com o Trakt)" }, "+ lista Trakt"));
   }
   function botaoTrailer(a) {
     if (S.modo !== "site") return null;
@@ -1115,7 +1205,15 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
       title: S.podeMarcar ? null : "Entre no claude.ai para guardar marcações",
       onclick: () => marcar(key, cur === k ? null : k),
     }, k === "quero" ? h("span", { class: "dot", "aria-hidden": "true" }) : null, label);
-    return h("div", { class: "marks" }, b("quero", rQuero), b("ouvi", rFeito));
+    return h("div", { class: "marks" }, b("quero", rQuero), b("ouvi", rFeito), avaliacao(key));
+  }
+  // Thumbs up/down on any recommendation or news note. The monthly and daily routines read them (estado.avaliacoes)
+  // to tune what the magazine recommends and covers.
+  function avaliacao(key) {
+    const cur = S.aval[key];
+    const b = (v, label, txt) => h("button", { type: "button", "data-v": v, "aria-pressed": String(cur === v), "aria-label": txt, title: S.podeMarcar ? txt : "Entre no claude.ai para guardar avaliações",
+      disabled: !S.podeMarcar, onclick: () => avaliar(key, cur === v ? null : v) }, label);
+    return h("span", { class: "rate", role: "group", "aria-label": "Avaliar esta recomendação" }, b("up", "👍", "Acertou, quero mais assim"), b("down", "👎", "Não é para mim"));
   }
   function selo(cur, kind) {
     if (cur === "quero") return h("span", { class: "mark-dot", title: "Na sua fila" });
@@ -1204,6 +1302,25 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
         h("div", { style: "margin-top:10px" }, links(it))));
   }
 
+  // "Em profundidade": the month's highlight seen through the artist behind it, with more of the work and what it influenced.
+  function blocoProfundo(ed, nome) {
+    const p = ed.aprofundamento;
+    if (!p || typeof p !== "object") return null;
+    const lista = (xs, f) => (arr(xs).length ? h("ul", null, arr(xs).map(f)) : null);
+    return h("section", { class: "prof", id: `profundo-${nome}` }, h("div", { class: "wrap" },
+      h("div", { class: "kicker mono" }, `Em profundidade · ${str(p.sobre)}`),
+      h("h2", null, str(p.titulo)),
+      p.linha_fina ? h("p", { class: "p-linha" }, str(p.linha_fina)) : null,
+      h("div", { class: "p-cols" },
+        h("div", { class: "p-txt" }, arr(p.texto).map((x) => h("p", null, str(x)))),
+        h("div", null,
+          arr(p.mais_da_obra).length ? h("h4", null, "Mais da obra") : null,
+          lista(p.mais_da_obra, (o) => h("li", null, h("b", null, [str(o.titulo), str(o.ano)].filter(Boolean).join(" · ")), o.nota ? h("small", null, str(o.nota)) : null)),
+          arr(p.influenciados).length ? h("h4", null, "Quem veio depois, e como") : null,
+          lista(p.influenciados, (o) => h("li", null, h("b", null, [str(o.artista), str(o.obra), str(o.ano)].filter(Boolean).join(" · ")), o.como ? h("small", null, str(o.como)) : null)),
+          arr(p.fontes).length ? h("p", { class: "p-fontes" }, "Fontes: ", arr(p.fontes).map((f, i) => [i ? " · " : "", fonteLink(f.url, str(f.fonte))])) : null))));
+  }
+
   function blocoPerfil(ed) {
     const p = Array.isArray(ed.perfil) ? ed.perfil : [];
     if (!p.length) return null;
@@ -1237,7 +1354,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     const corpo = !S.podeMarcar ? h("p", { class: "vazio" }, "Entre no claude.ai para guardar e ver sua fila.")
       : !lista.length ? h("p", { class: "vazio" }, "Sua fila está vazia. Toque em \"Quero ouvir\" em qualquer disco.")
       : h("div", { class: "grid" }, lista.map((a) => { const c = card(a); c.insertBefore(h("div", { class: "mono", style: "color:var(--sec)" }, a._de), c.children[1]); return c; }));
-    return h("section", { class: "secao", id: "fila" }, h("div", { class: "wrap" }, head, corpo));
+    return h("section", { class: "secao", id: "fila" }, h("div", { class: "wrap" }, head, corpo, blocoSync()));
   }
 
   // ---------- Tabs: news, themes, films, books ----------
@@ -1371,6 +1488,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
       n.como_noticiaram ? h("div", { class: "d-cob" }, h("h4", { class: "mono" }, "Como os veículos noticiaram"), h("p", null, str(n.como_noticiaram))) : null,
       n.analise ? h("div", { class: "d-ana" }, h("h4", { class: "mono" }, "Análise"), h("p", null, str(n.analise))) : null,
       n.por_que_importa ? h("p", { class: "ponte" }, h("b", null, "Por que importa: "), str(n.por_que_importa)) : null,
+      h("div", { class: "d-rate" }, h("span", null, "Quer mais deste assunto?"), avaliacao(`nota:${d._id}:${str(n.id) || str(n.titulo)}`)),
       arr(n.fontes).length ? h("ul", { class: "d-fontes" }, arr(n.fontes).map((f) => h("li", null,
         fonteLink(f.url, str(f.fonte)), f.perfil ? h("span", { class: "mono" }, ` · ${str(f.perfil)}`) : null,
         f.enfoque ? h("small", null, str(f.enfoque)) : null))) : null))));
@@ -1530,8 +1648,8 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
           h("p", { class: "b-kick mono", style: "margin:0" }, h("span", null, "Faixa Oculta apresenta"), h("b", null, `Edição nº ${o.numero}${o.mes ? " · " + o.mes : ""}`)),
           h("h2", { class: "b-nome" }, o.nome, h("span", { class: "dot", "aria-hidden": "true" })),
           o.stats ? h("p", { class: "b-stats mono" }, o.stats) : null,
-          o.playlist && safeUrl(o.playlist.url) ? h("div", { class: "b-pl" },
-            h("a", { href: safeUrl(o.playlist.url), target: "_blank", rel: "noopener", class: "mono" }, "Playlist no Spotify ↗")) : null),
+          o.ouvirTudo || (o.playlist && safeUrl(o.playlist.url)) ? h("div", { class: "b-pl b-ouvir" }, o.ouvirTudo || null,
+            o.playlist && safeUrl(o.playlist.url) ? h("a", { href: safeUrl(o.playlist.url), target: "_blank", rel: "noopener", class: "mono" }, "Playlist no Spotify ↗") : null) : null),
         o.toc.length ? h("nav", { class: "b-toc", "aria-label": "Nesta edição" }, h("h3", { class: "mono" }, "Nesta edição"),
           h("ol", null, o.toc.map((t) => h("li", { class: t.guia ? "g" : null }, h("button", { type: "button", onclick: () => ir(t.id) }, h("span", { "aria-hidden": "true" }, t.n), h("span", null, t.titulo)))))) : null));
   }
@@ -1621,6 +1739,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
         }
       }
       if (dest) nT++;
+      if (ed.aprofundamento) toc.push({ n: "◆", titulo: "Em profundidade", id: `profundo-${cfg.nome}`, guia: true });
       const nomeObra = cfg.nome === "livros" ? ["livro", "livros"] : ["título", "títulos"];
       partes.push(banner({ nome: cfg.nome, numero: str(ed.numero), mes: str(ed.mes).toLowerCase(), capas, toc,
         stats: [plural(nT, ...nomeObra), nG ? plural(nG, "guia", "guias") : ""].filter(Boolean).join(" · ") }));
@@ -1637,6 +1756,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
         dest.texto ? h("p", { class: "txt", style: "margin:0 0 14px" }, str(dest.texto)) : null,
         h("div", { class: "acts", style: "gap:14px 20px" }, h("button", { class: "ler", type: "button", onclick: () => abrirLeitura(dest._id) }, `${cfg.ler} de capa`), botaoTrailer(dest), botaoStremio(dest), marcas(dest._id, cfg.rot)),
         sel ? h("div", { style: "margin-top:16px" }, sel) : null)));
+    { const pr = blocoProfundo(ed, cfg.nome); if (pr) partes.push(pr); }
     let n = 0;
     for (const b of arr(ed.layout)) {
       if (b.tipo === "secao") {
@@ -2838,10 +2958,12 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
         }
       }
       if (destaque) nD++;
+      if (ed.aprofundamento) toc.push({ n: "◆", titulo: "Em profundidade", id: "profundo-musica", guia: true });
       main.append(banner({ nome: "música", numero: str(ed.numero), mes: str(ed.mes).toLowerCase(), capas, toc, quadrado: true, playlist: ed.playlist,
+        ouvirTudo: botaoOuvirTudo(capas.map((c) => c.a)),
         stats: [plural(nD, "disco", "discos"), nG ? plural(nG, "guia", "guias") : ""].filter(Boolean).join(" · ") }));
     }
-    if (f === "tudo") { const c = blocoCapa(ed, destaque); if (c) main.append(c); const p = blocoPerfil(ed); if (p) main.append(p); }
+    if (f === "tudo") { const c = blocoCapa(ed, destaque); if (c) main.append(c); const pr = blocoProfundo(ed, "musica"); if (pr) main.append(pr); const p = blocoPerfil(ed); if (p) main.append(p); }
     let n = 0;
     for (const bloco of layout) {
       if (bloco.tipo === "secao") {
@@ -2890,6 +3012,53 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     render();
     gravarEstado();
   }
+  function avaliar(key, valor) {
+    const novo = { ...S.aval }, em = { ...S.avalEm, [key]: new Date().toISOString() };
+    if (valor) novo[key] = valor; else delete novo[key];
+    S.aval = novo; S.avalEm = em;
+    if (S.modo === "site") {
+      try { localStorage.setItem("fo-aval", JSON.stringify(novo)); localStorage.setItem("fo-aval-em", JSON.stringify(em)); } catch (e) {}
+      render();
+      return;
+    }
+    if (!S.db || !S.uid) return;
+    render();
+    gravarEstado();
+  }
+  // The GitHub site keeps marks and ratings in this browser only. To reach the routines they go to claude.ai:
+  // the site copies a code, the claude.ai page pastes it and merges (newer timestamp wins).
+  function codigoSync() { return JSON.stringify({ fo: 1, marcas: S.marcas, marcas_em: S.marcasEm, avaliacoes: S.aval, avaliacoes_em: S.avalEm }); }
+  function importarSync(txt) {
+    let o; try { o = JSON.parse(txt); } catch (e) { return "Código inválido."; }
+    if (!o || o.fo !== 1) return "Código inválido.";
+    const obj = (v) => (v && typeof v === "object" && !Array.isArray(v) ? v : {});
+    const juntar = (cur, curEm, nov, novEm) => {
+      const out = { ...cur }, em = { ...curEm };
+      for (const k of new Set([...Object.keys(obj(nov)), ...Object.keys(obj(novEm))])) {
+        if (str(obj(novEm)[k]) >= str(em[k])) { if (obj(nov)[k]) out[k] = obj(nov)[k]; else delete out[k]; em[k] = str(obj(novEm)[k]) || new Date().toISOString(); }
+      }
+      return [out, em];
+    };
+    [S.marcas, S.marcasEm] = juntar(S.marcas, S.marcasEm, o.marcas, o.marcas_em);
+    [S.aval, S.avalEm] = juntar(S.aval, S.avalEm, o.avaliacoes, o.avaliacoes_em);
+    if (S.modo === "site") return "Só funciona dentro do claude.ai.";
+    gravarEstado(); render();
+    return "Marcações e avaliações importadas.";
+  }
+  function blocoSync() {
+    if (!S.podeMarcar) return null;
+    if (S.modo === "site") {
+      const n = Object.keys(S.aval).length + Object.keys(S.marcas).length;
+      return h("details", { class: "sync-box" }, h("summary", null, "Levar marcações e avaliações deste navegador para o claude.ai"),
+        h("p", null, `Neste site elas ficam só neste navegador (${n} agora). Para a revista aprender com elas, copie o código e cole na mesma área da revista no claude.ai.`),
+        h("button", { class: "ler", type: "button", onclick: (e) => { const t = codigoSync(); (navigator.clipboard ? navigator.clipboard.writeText(t) : Promise.reject()).then(() => { e.target.textContent = "Código copiado"; }, () => { window.prompt("Copie o código:", t); }); } }, "Copiar código"));
+    }
+    const ta = h("textarea", { "aria-label": "Código copiado do site" });
+    const msg = h("p", { class: "mono", role: "status" });
+    return h("details", { class: "sync-box" }, h("summary", null, "Trazer marcações e avaliações do site do GitHub"),
+      h("p", null, "No site, abra Minha fila, toque em Copiar código e cole aqui."), ta,
+      h("button", { class: "ler", type: "button", onclick: () => { msg.textContent = importarSync(ta.value); } }, "Importar"), msg);
+  }
   // Comments on agenda items ({key: {texto, em}}), stored next to the marks; an empty text clears the radar's note.
   function comentar(key, texto) {
     const novo = { ...S.comentarios, [key]: { texto: str(texto), em: new Date().toISOString() } };
@@ -2906,7 +3075,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
   }
   // The whole estado doc is written each time, so marks, comments, visits and notes never overwrite each other.
   function gravarEstado() {
-    gravando = gravando.then(() => S.db.doc(`data/users/${S.uid}/estado`).set({ marcas: S.marcas, marcas_em: S.marcasEm, comentarios: S.comentarios,
+    gravando = gravando.then(() => S.db.doc(`data/users/${S.uid}/estado`).set({ marcas: S.marcas, marcas_em: S.marcasEm, avaliacoes: S.aval, avaliacoes_em: S.avalEm, comentarios: S.comentarios,
       idas_mod: S.idasMod, idas_del: S.idasDel, notas_novas: S.notasNovas, atualizado: new Date().toISOString() }))
       .catch((e) => { if (e && e.code === "invalid_argument") { S.podeMarcar = false; render(); } });
   }
@@ -2932,7 +3101,9 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
   let colsAgora = nColsAgenda();
   window.addEventListener("resize", () => { const n = nColsAgenda(); if (n !== colsAgora) { colsAgora = n; if (S.aba === "agenda") render(); } });
   window.addEventListener("hashchange", () => { let k = location.hash.slice(1); if (k === "temas") k = "noticias"; if (k !== S.aba && ABAS.some(([a]) => a === k)) { if (S.aberto) fecharLeitura(); trocarAba(k); } });
-  document.getElementById("dock-fechar").addEventListener("click", () => { tocando.url = null; document.getElementById("dock-frame").replaceChildren(); desenharPlayer(); render(); });
+  document.getElementById("dock-fechar").addEventListener("click", () => { pararFila(); tocando.url = null; document.getElementById("dock-frame").replaceChildren(); desenharPlayer(); render(); });
+  document.getElementById("dock-ant").addEventListener("click", () => proxFila(-1));
+  document.getElementById("dock-prox").addEventListener("click", () => proxFila(1));
   document.getElementById("dock-tam").addEventListener("click", () => { tocando.grande = !tocando.grande; desenharPlayer(); });
   dlg.addEventListener("keydown", (e) => {
     if (e.target.closest("input,select,textarea")) return;
@@ -2968,6 +3139,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
       S.modo = "site";
       S.podeMarcar = true;
       try { S.marcas = JSON.parse(localStorage.getItem("fo-marcas") || "{}") || {}; } catch (e) { S.marcas = {}; }
+      S.aval = lerLS("fo-aval", {}); S.avalEm = lerLS("fo-aval-em", {});
     } catch (e) { S.falhou = true; }
     render();
   }
@@ -2991,7 +3163,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
       S.uid = uid; S.podeMarcar = true;
       db.doc(`data/users/${uid}/estado`).onSnapshot((d) => {
         const e = (d.exists && d.data()) || {}, obj = (v) => (v && typeof v === "object" && !Array.isArray(v) ? v : {});
-        S.marcas = obj(e.marcas); S.marcasEm = obj(e.marcas_em); S.comentarios = obj(e.comentarios);
+        S.marcas = obj(e.marcas); S.marcasEm = obj(e.marcas_em); S.aval = obj(e.avaliacoes); S.avalEm = obj(e.avaliacoes_em); S.comentarios = obj(e.comentarios);
         S.idasMod = obj(e.idas_mod); S.idasDel = obj(e.idas_del); S.notasNovas = Array.isArray(e.notas_novas) ? e.notas_novas : [];
         render();
       }, () => {});
