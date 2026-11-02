@@ -1368,7 +1368,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     const corpo = !S.podeMarcar ? h("p", { class: "vazio" }, "Entre no claude.ai para guardar e ver sua fila.")
       : !lista.length ? h("p", { class: "vazio" }, "Sua fila está vazia. Toque em \"Quero ouvir\" em qualquer disco.")
       : h("div", { class: "grid" }, lista.map((a) => { const c = card(a); c.insertBefore(h("div", { class: "mono", style: "color:var(--sec)" }, a._de), c.children[1]); return c; }));
-    return h("section", { class: "secao", id: "fila" }, h("div", { class: "wrap" }, head, corpo, blocoSync(), blocoChaves()));
+    return h("section", { class: "secao", id: "fila" }, h("div", { class: "wrap" }, head, corpo, blocoSync()));
   }
 
   // ---------- Tabs: news, themes, films, books ----------
@@ -1783,6 +1783,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
           h("div", { class: "mgrid" }, lista.map((a) => cardObra(a, a._id, cfg))))));
       } else if (b.tipo === "guia" && guias.get(b.id)) partes.push(guiaObra(guias.get(b.id), cfg));
     }
+    if (cfg === REVISTAS.cinema) { const k = blocoChaves(); if (k) partes.push(h("section", { class: "secao", id: "cinema-config" }, h("div", { class: "wrap" }, k))); }
     return partes;
   }
   function entradasRevista(cfg, ed) {
