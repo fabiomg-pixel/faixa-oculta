@@ -3,7 +3,7 @@
 A Faixa Oculta é uma revista pessoal, feita para um único leitor: o Fabio, professor e pesquisador de biofísica na UFRJ, no Rio. A aba de cinema sai uma vez por mês, no formato de revista: matéria de capa, seções de novidades e guias temáticos (movimentos, cineastas, grupos, estilos). Ele lê para escolher o que ver, então cada filme precisa dizer onde assistir no Brasil. A revista prefere achados e pérolas a sucessos óbvios: coisas boas que estão disponíveis e talvez ele não saiba. Em séries, o foco são minisséries e séries limitadas, que começam e acabam (uma temporada fechada, ou poucas e já encerradas), nada de séries longas em andamento. Também entra cultura pop, quando vale a pena e com leitura crítica.
 
 ## O leitor
-- Gosta de cinema de autor (festivais, crítica), cinema brasileiro e séries curtas.
+- Gosta de cinema de autor (festivais, crítica), cinema brasileiro e séries curtas. Também gosta de ficção científica, fantasia e política (cinema político, thrillers políticos, distopias): use esse gosto em todas as seções, em especial em `pop`, e nos guias.
 - Gosto musical, útil para a "ponte": indie confessional (Lucy Dacus, Phoebe Bridgers, Julia Jacklin), art-rock e pós-punk (Geese, bar italia), folk literário (The Decemberists, Okkervil River), shoegaze (Wishy), rock e instrumental brasileiros (Papangu, Letrux, Bianca Gismonti), cânone (Radiohead, Pink Floyd). Pesquisa malária e vetores, então ciência, natureza e Amazônia também tocam nele.
 - Use a data de hoje da execução.
 

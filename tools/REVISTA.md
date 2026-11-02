@@ -94,7 +94,8 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
 - Cinema, seções da edição anterior: `cartaz` (em cartaz ou estreando no Brasil), `series` (minisséries fechadas),
   `achados`, `brasil`, `pop`, `breve`; 20 a 25 itens e 2 guias. `onde` conferido no JustWatch Brasil ou equivalente na
   semana da rodada.
-- Livros, seções: `lancamentos`, `brasil`, `ideias` (não ficção), `achados`; 15 a 18 itens e 2 guias. Edição brasileira,
+- Livros, seções: `lancamentos`, `brasil`, `ideias` (não ficção), `achados`, `pop` (3 ou 4: ficção científica, fantasia,
+  thriller político e os livros do momento, com leitura crítica); 18 a 22 itens e 2 guias. Edição brasileira,
   editora e páginas conferidas. Campo `downloads` só com cópias gratuitas autorizadas (regra no brief); nunca acervo pirata.
 - Filmes e séries: `imdb` sempre que existir; a página põe "Assistir no Stremio" (abre a ficha, onde se adiciona à
   biblioteca), a versão web e "+ lista Trakt" (o Trakt sincroniza com Stremio e Nuvio).

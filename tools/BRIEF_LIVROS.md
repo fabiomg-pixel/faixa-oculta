@@ -3,7 +3,7 @@
 A Faixa Oculta é uma revista pessoal, feita para um único leitor: o Fabio, professor e pesquisador de biofísica na UFRJ, no Rio. A aba de livros sai uma vez por mês, no formato de revista: matéria de capa, seções e guias temáticos (tradições, grupos de autores, gêneros, temas). Ele lê para escolher o que ler, então cada livro precisa dizer a edição brasileira e o tamanho. A revista prefere achados e pérolas a best-sellers óbvios. Ele tem pouco tempo: dê preferência a livros curtos ou médios (até ~300 páginas), sem excluir um livro maior quando ele for essencial ao tema.
 
 ## O leitor
-- Gosta de ficção curta (novelas, romances curtos, contos) e de não ficção curta (ensaios, ciência, história, sociedade).
+- Gosta de ficção curta (novelas, romances curtos, contos) e de não ficção curta (ensaios, ciência, história, sociedade). Também gosta de ficção científica, fantasia e política (romance político, distopia, não ficção política): use esse gosto em todas as seções, em especial em `pop`, e nos guias.
 - Gosto musical, útil para a "ponte": indie confessional (Lucy Dacus, Phoebe Bridgers, Julia Jacklin), art-rock e pós-punk (Geese, bar italia), folk literário (The Decemberists, Okkervil River), rock e instrumental brasileiros (Papangu, Letrux, Bianca Gismonti), cânone (Radiohead, Pink Floyd). Pesquisa malária e vetores: ciência, natureza, Amazônia e saúde pública tocam nele.
 - Use a data de hoje da execução.
 
