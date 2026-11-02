@@ -6,10 +6,10 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
 
 | Rotina | Quando | O que grava |
 |---|---|---|
-| Revista da semana | domingo, 8h23 | `semanas/<domingo de hoje>` |
+| Revista da semana | quinta, 8h23 | `semanas/<quinta de hoje>` |
 | Música do mês | dia 1, 14h12 | `edicoes/AAAA-MM`, `itens/*`, `guias/*` |
-| Cinema do mês | dia 3, 14h12 | `cine_edicoes/AAAA-MM`, `cine_itens/*`, `cine_guias/*` |
-| Livros do mês | dia 5, 14h12 | `livro_edicoes/AAAA-MM`, `livro_itens/*`, `livro_guias/*` |
+| Cinema do mês | dia 1, 15h12 | `cine_edicoes/AAAA-MM`, `cine_itens/*`, `cine_guias/*` |
+| Livros do mês | dia 1, 16h12 | `livro_edicoes/AAAA-MM`, `livro_itens/*`, `livro_guias/*` |
 | Complemento quinzenal | dia 15, 14h12 | itens novos nas edições do mês de música e cinema |
 
 ## 0. Regras comuns
@@ -53,10 +53,11 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
   o de reserva; Apple só como link (`apple_url`) quando não houver os outros.
 - Filmes e séries: `imdb` (id `tt…`, conferido na página do IMDb ou da Wikipedia) para o botão do Stremio.
 
-## 2. Revista da semana (domingo)
-- doc_id = a data de hoje (domingo); `inicio` = domingo anterior, `fim` = ontem (sábado).
+## 2. Revista da semana (quinta)
+- doc_id = a data de hoje (quinta); `inicio` = quinta anterior, `fim` = ontem (quarta). Na primeira quinta (5/11/2026),
+  `inicio` = 1/11, o dia seguinte ao fim da edição de domingo 1/11.
 - Base: os boletins da semana (`dias`, query por `data` entre `inicio` e `fim`, manhã e noite) e as leituras ligadas a
-  eles. Apure de novo os temas centrais: o que mudou até sábado, como cada lado cobriu.
+  eles. Apure de novo os temas centrais: o que mudou até ontem, como cada lado cobriu.
 - Forma (a de `semanas/2026-10-25`): `titulo`; `panorama` (3 parágrafos sobre o padrão da semana);
   `temas` (8 a 10, cada um com `id`, `editoria`, `titulo`, `linha_fina`, `resumo` [3 a 4 parágrafos], `cobertura`
   [4 a 6 veículos de perfis diferentes com `fonte`, `perfil`, `enfoque`, `url`], `vieses`, `o_que_falta`, `perguntas`
@@ -88,7 +89,7 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
 - **Em profundidade.** Faça o campo `aprofundamento` da edição sobre o artista por trás da matéria de capa (ver §7).
 - Commit "Música: edição de <mês>".
 
-## 4. Cinema do mês (dia 3) e Livros do mês (dia 5)
+## 4. Cinema do mês e Livros do mês (dia 1, depois da música)
 - doc_id da edição `AAAA-MM`, itens `AAAA-MM--<slug do título>`, guias `guia-cine-<slug>` / `guia-livro-<slug>`.
 - Cinema, seções da edição anterior: `cartaz` (em cartaz ou estreando no Brasil), `series` (minisséries fechadas),
   `achados`, `brasil`, `pop`, `breve`; 20 a 25 itens e 2 guias. `onde` conferido no JustWatch Brasil ou equivalente na
@@ -103,7 +104,7 @@ banco do artefato https://claude.ai/artifact/955jruTrT56VTc12DpqiPS (ferramenta 
 ## 5. Complemento quinzenal (dia 15)
 - Não cria edição. Acrescenta à edição de música do mês 5 a 8 discos lançados desde o dia 1 (seção `radar`) e à de
   cinema 3 a 5 estreias da quinzena no Brasil (seções `cartaz` ou `series`), com `ordem` seguindo a última do mês.
-- Se as edições do mês ainda não existirem (rotina do dia 1 ou 3 falhou), faça primeiro a que faltar, pelos passos 3 e 4.
+- Se as edições do mês ainda não existirem (alguma rotina do dia 1 falhou), faça primeiro a que faltar, pelos passos 3 e 4.
 - Commit "Complemento da quinzena de <mês>".
 
 ## 6. Publicar e relatar
