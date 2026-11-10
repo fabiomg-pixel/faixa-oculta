@@ -58,14 +58,14 @@ def main():
     notas = ler(os.path.join(a.radar, "notas")) if os.path.isdir(os.path.join(a.radar, "notas")) else {}
     perfil = ler(os.path.join(a.radar, "perfil")).get("gostos", {}) if os.path.isdir(os.path.join(a.radar, "perfil")) else {}
     idas = ler(os.path.join(a.radar, "idas"))
-    rodadas = sorted(ler(os.path.join(a.radar, "rodadas")).values(), key=lambda r: r.get("em", ""))
+    rodadas = sorted(ler(os.path.join(a.radar, "rodadas")).values(), key=lambda r: str(r.get("em") or ""))
     playlists = ler(os.path.join(a.radar, "playlists")).get("atual")
 
     agenda = {
         "eventos": [{**d, "id": k} for k, d in eventos.items()],
         "retorno": {k: {kk: vv for kk, vv in d.items() if kk in ("decisao", "em", "nota", "snap")} for k, d in retorno.items()},
         "perfil": {k: perfil[k] for k in PERFIL if k in perfil},
-        "notas": sorted(({"id": k, "texto": d.get("texto", ""), "em": d.get("em", "")} for k, d in notas.items()), key=lambda n: n["em"], reverse=True),
+        "notas": sorted(({"id": k, "texto": str(d.get("texto") or ""), "em": str(d.get("em") or "")} for k, d in notas.items()), key=lambda n: n["em"], reverse=True),
         "idas": [{**d, "id": k} for k, d in idas.items()],
         "rodada": rodadas[-1] if rodadas else None,
         "playlists": playlists,
@@ -93,7 +93,7 @@ def main():
             rid = chave[len("radar:"):]
             em = quando.get(chave, "")
             atual = retorno.get(rid, {})
-            if atual.get("decisao") == valor or (atual.get("em") and em and atual["em"] >= em):
+            if atual.get("decisao") == valor or (atual.get("em") and em and str(atual["em"]) >= str(em)):
                 continue
             vindos[rid] = {**atual, "decisao": valor, "em": em or atual.get("em", ""), "origem": "faixa-oculta"}
         for chave, em in quando.items():
@@ -106,7 +106,7 @@ def main():
         for rid, c in (est.get("comentarios", {}) or {}).items():
             texto, em = str((c or {}).get("texto", "")).strip(), str((c or {}).get("em", ""))
             atual = vindos.get(rid) or retorno.get(rid, {})
-            if texto == atual.get("nota", "") or (retorno.get(rid, {}).get("em") and em and retorno[rid]["em"] >= em):
+            if texto == atual.get("nota", "") or (retorno.get(rid, {}).get("em") and em and str(retorno[rid]["em"]) >= str(em)):
                 continue
             vindos[rid] = {**atual, "nota": texto, "em": max(em, str(atual.get("em", ""))), "origem": "faixa-oculta"}
         for iid, ida in (est.get("idas_mod", {}) or {}).items():

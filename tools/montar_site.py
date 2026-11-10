@@ -58,7 +58,7 @@ def main():
             bundle[col][os.path.basename(f)[:-5]] = doc
 
     txt = json.dumps(bundle, ensure_ascii=False)
-    ids = sorted(set(re.findall(r"/_blob/([0-9a-f]{32})", txt)))
+    ids = sorted(set(re.findall(r"(?:/_blob/|capas/)([0-9a-f]{32})", txt)))
     disponiveis = {}
     for f in os.listdir(a.assets):
         m = re.match(r"([0-9a-f]{32})", f)
@@ -68,7 +68,9 @@ def main():
     faltando = []
     for i in ids:
         if i in disponiveis:
-            shutil.copy(disponiveis[i], os.path.join(saida, "capas", i + ".jpg"))
+            dst = os.path.join(saida, "capas", i + ".jpg")
+            if os.path.abspath(disponiveis[i]) != os.path.abspath(dst):
+                shutil.copy(disponiveis[i], dst)
         else:
             faltando.append(i)
     txt = re.sub(r"/_blob/([0-9a-f]{32})", r"capas/\1.jpg", txt)
