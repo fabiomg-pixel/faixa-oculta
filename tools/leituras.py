@@ -8,11 +8,18 @@ reading to DIR/<doc_id>.json (doc_id = first 16 hex chars of sha1 of the normali
 maps to the same doc) and prints a summary plus warnings for readings that break the rules (missing url/fonte/resumo,
 summary too long, quote of 15 words or more).
 """
-import argparse, hashlib, json, os, re, sys
+import argparse, hashlib, json, os, re, sys, urllib.parse
+
+
+def limpar_url(url):
+    s = urllib.parse.urlsplit(str(url).strip())
+    q = [(k, v) for k, v in urllib.parse.parse_qsl(s.query, keep_blank_values=True)
+         if not k.lower().startswith(("utm_", "fbclid", "gclid"))]
+    return urllib.parse.urlunsplit((s.scheme, s.netloc, s.path, urllib.parse.urlencode(q), ""))
 
 
 def chave(url):
-    u = re.sub(r"[?#].*$", "", str(url)).rstrip("/")
+    u = limpar_url(url).rstrip("/")
     return re.sub(r"^https?://(www\.)?", "", u).lower()
 
 
@@ -32,7 +39,7 @@ def main():
             if not (l.get("url") and l.get("fonte") and l.get("resumo")):
                 avisos.append(f"sem url/fonte/resumo: {l.get('url') or l.get('titulo')}")
                 continue
-            l["url"] = re.sub(r"[?&]utm_[^&]+", "", l["url"])
+            l["url"] = limpar_url(l["url"])
             palavras = len(" ".join(map(str, l["resumo"])).split())
             if palavras > 320:
                 avisos.append(f"resumo com {palavras} palavras: {l['url']}")

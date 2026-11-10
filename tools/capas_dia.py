@@ -34,7 +34,10 @@ def main():
     ap.add_argument("--saida", required=True)
     a = ap.parse_args()
     os.makedirs(a.saida, exist_ok=True)
-    ano, mes, dia = a.data.split("-")
+    m_data = re.fullmatch(r"(\d{4})-(\d{2})-(\d{2})", a.data)
+    if not m_data:
+        raise SystemExit(f"Data inválida (use AAAA-MM-DD): {a.data}")
+    ano, mes, dia = m_data.groups()
     marca = f"{dia}{mes}{ano}"
     capas, sem = [], []
     for nome, slug, site in JORNAIS:
@@ -44,7 +47,7 @@ def main():
         except Exception as e:
             sem.append({"jornal": nome, "motivo": f"página não abriu: {e}"})
             continue
-        achadas = re.findall(rf"https://cdn\.vercapas\.com\.br/covers/{slug}/{ano}/capa-jornal-{slug}-{marca}-[0-9a-f]+\.jpg", html)
+        achadas = re.findall(rf"https://cdn\.vercapas\.com\.br/covers/{re.escape(slug)}/\d{{4}}/capa-jornal-{re.escape(slug)}-{marca}-[0-9a-f]+\.(?:jpe?g|webp)", html)
         if not achadas:
             sem.append({"jornal": nome, "motivo": "sem capa desta data"})
             continue

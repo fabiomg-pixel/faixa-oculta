@@ -910,6 +910,390 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
 .prof .p-fontes { font-size: var(--fs-xs); color: var(--muted); }
 .sync-box { margin-top: var(--sp-3); font-size: var(--fs-s); }
 .sync-box textarea { width: 100%; min-height: 70px; font: 12px var(--f-mono); }
+
+/* Dropdown de edições do mês e notícias salvas */
+.d-edsel-box { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin: var(--sp-2) 0 var(--sp-3); }
+.d-edsel-label { display: inline-flex; align-items: center; gap: 8px; font-size: var(--fs-xs); color: var(--muted); }
+.d-edsel-txt { font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--ink); }
+.d-edsel-select { font: 500 var(--fs-xs) var(--f-mono); background: var(--card); color: var(--ink); border: 1px solid var(--rule); border-radius: var(--pill); padding: 6px 14px; cursor: pointer; outline: none; transition: border-color .15s; }
+.d-edsel-select:hover, .d-edsel-select:focus { border-color: var(--sec); }
+.d-btn-filtro-salvas { font: 600 var(--fs-xs) var(--f-mono); padding: 6px 14px; border-radius: var(--pill); border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 6px; transition: all .15s; }
+.d-btn-filtro-salvas:hover { border-color: var(--sec); background: var(--card); }
+.d-btn-filtro-salvas.ativo { background: var(--sec); color: #fff; border-color: var(--sec); }
+
+.d-salvas-topo { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; border-bottom: 1px solid var(--rule); padding-bottom: 8px; }
+.d-salvas-topo h3 { margin: 0; font-size: var(--fs-m); }
+.d-nota-acts { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.d-btn-salvar { font: 600 var(--fs-xs) var(--f-mono); padding: 6px 12px; border-radius: var(--pill); border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all .15s; }
+.d-btn-salvar:hover { border-color: var(--sec); background: var(--card); }
+.d-btn-salvar.salva { background: var(--sec); color: #fff; border-color: var(--sec); }
+.d-btn-ouvir-nota { font: 600 var(--fs-xs) var(--f-mono); padding: 6px 12px; border-radius: var(--pill); border: 1px solid var(--rule); background: var(--paper); color: var(--ink); cursor: pointer; display: inline-flex; align-items: center; gap: 4px; transition: all .15s; }
+.d-btn-ouvir-nota:hover { border-color: var(--sec); background: var(--card); }
+.d-btn-ouvir-nota.falando { background: var(--sec); color: #fff; border-color: var(--sec); }
+
+
+/* Modo Leitor Avançado (Controles de Fonte, Tamanho e Tema) */
+/* ========================================================
+   MODO LEITOR DEFINITIVO (Tipografia, Tamanho, Temas e Contraste)
+   ======================================================== */
+dialog.texto, dialog.leitura {
+  background: var(--lt-bg, #F3EEE4) !important;
+  color: var(--lt-fg, #1C1A17) !important;
+  border-color: var(--lt-rule, #D4CBBA) !important;
+  transition: background .2s ease, color .2s ease;
+}
+
+dialog.texto .lt-box,
+dialog.leitura,
+dialog.leitura .l-bar,
+dialog.leitura .l-corpo,
+dialog.leitura .l-hero,
+dialog.leitura .l-aside,
+dialog.leitura .l-criticas {
+  background: var(--lt-bg, #F3EEE4) !important;
+  color: var(--lt-fg, #1C1A17) !important;
+}
+
+/* Forçar TODAS as cores de texto nos modais do leitor para respeitar o tema */
+dialog.texto h1, dialog.texto h2, dialog.texto h3, dialog.texto h4,
+dialog.texto p, dialog.texto span:not(.edt):not(.mono):not(.lt-meta):not(.lt-nota),
+dialog.texto b, dialog.texto strong,
+dialog.texto li, dialog.texto blockquote,
+dialog.texto .fl-ler,
+dialog.leitura h1, dialog.leitura h2, dialog.leitura h3,
+dialog.leitura p, dialog.leitura span:not(.dot):not(.badge):not(.mono):not(.kicker):not(.l-ctx):not(.lt-nota),
+dialog.leitura b, dialog.leitura strong,
+dialog.leitura li, dialog.leitura dd,
+dialog.leitura .l-alb, dialog.leitura .l-olho {
+  color: var(--lt-fg, #1C1A17) !important;
+}
+dialog.texto[data-lt-tema="escuro"] .fl-ler:hover,
+dialog.leitura[data-lt-tema="escuro"] .fl-ler:hover {
+  color: #EE6A50 !important;
+}
+
+dialog.texto .mono, dialog.texto .lt-meta,
+dialog.leitura .mono, dialog.leitura .kicker, dialog.leitura .l-ctx,
+dialog.leitura .ficha dt, dialog.leitura .lt-aviso {
+  color: var(--lt-muted, #666055) !important;
+}
+
+/* Linhas e bordas nos leitores */
+dialog.leitura .l-bar,
+dialog.leitura .l-corpo,
+dialog.leitura .ficha dt, dialog.leitura .ficha dd,
+dialog.leitura .l-criticas,
+dialog.leitura .l-criticas .lc,
+dialog.texto .lt-link-rodape {
+  border-color: var(--lt-rule, #D4CBBA) !important;
+}
+
+/* Botões nos leitores */
+dialog.leitura .l-btn,
+dialog.texto .l-btn {
+  border: var(--bw) solid var(--lt-fg, #1C1A17) !important;
+  color: var(--lt-fg, #1C1A17) !important;
+  background: transparent !important;
+}
+dialog.leitura .l-btn:hover:not([disabled]),
+dialog.texto .l-btn:hover:not([disabled]) {
+  background: var(--lt-fg, #1C1A17) !important;
+  color: var(--lt-bg, #F3EEE4) !important;
+}
+
+/* Controles de leitura */
+.lt-controles {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 8px 12px;
+  background: var(--lt-card, #EAE3D2) !important;
+  border: var(--bw) solid var(--lt-rule, #D4CBBA) !important;
+  margin: 12px 0 20px;
+  font-size: var(--fs-xs);
+}
+.lt-grupo-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.lt-lbl-ctrl {
+  text-transform: uppercase;
+  color: var(--lt-muted, #666055) !important;
+  font-size: 11px;
+  letter-spacing: .05em;
+  margin-right: 2px;
+}
+.lt-btn-ctrl {
+  border: var(--bw) solid var(--lt-rule, #1C1A17) !important;
+  background: transparent !important;
+  color: var(--lt-fg, #1C1A17) !important;
+  padding: 4px 9px;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 2px;
+  transition: all .15s ease;
+}
+.lt-btn-ctrl.ativo, .lt-btn-ctrl:hover:not([disabled]) {
+  background: var(--lt-fg, #1C1A17) !important;
+  color: var(--lt-bg, #F3EEE4) !important;
+}
+.lt-btn-ctrl[disabled] {
+  opacity: .35;
+  cursor: not-allowed;
+}
+.lt-tam-val {
+  font-weight: 700;
+  min-width: 38px;
+  text-align: center;
+  color: var(--lt-fg, #1C1A17) !important;
+}
+
+/* Caixas de destaque e cards de críticas */
+dialog.texto .importa,
+dialog.texto .lt-visoes-box,
+dialog.texto .lt-aprofunda-box,
+dialog.texto .cob-card,
+dialog.leitura .l-criticas .lc {
+  background: var(--lt-card, #EAE3D2) !important;
+  color: var(--lt-fg, #1C1A17) !important;
+  border-color: var(--lt-rule, #D4CBBA) !important;
+}
+.lt-visoes-box {
+  margin: 22px 0;
+  padding: 16px 20px;
+  border-left: 4px solid var(--ocre, #B5862C) !important;
+}
+.lt-aprofunda-box {
+  margin: 22px 0;
+  padding: 16px 20px;
+  border-left: 4px solid var(--anil, #2F4F6F) !important;
+}
+
+/* TAMANHO E FONTE DINÂMICOS DO TEXTO (com especificidade sobre 'p') */
+dialog.texto .lt-corpo-completo,
+dialog.texto .lt-corpo-completo p,
+dialog.texto .lt-box p,
+dialog.leitura .l-texto,
+dialog.leitura .l-texto p,
+dialog.leitura .l-criticas .lc p,
+dialog.texto .lt-visoes-box p,
+dialog.texto .lt-aprofunda-box p,
+dialog.texto .importa p {
+  font-family: var(--lt-font, var(--f-body, "Newsreader", Georgia, serif)) !important;
+  font-size: var(--lt-size, 17px) !important;
+  line-height: var(--lt-lh, 1.65) !important;
+  color: var(--lt-fg, #1C1A17) !important;
+}
+
+/* Espaçamento e alinhamento elegante para leitura fluida */
+dialog.texto .lt-corpo-completo p,
+dialog.leitura .l-texto p {
+  margin: 0 0 1.25em !important;
+  text-align: justify !important;
+}
+
+.lt-orig-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 12px;
+  border: var(--bw) solid var(--sec, var(--red));
+  color: var(--sec, var(--red));
+  font-size: var(--fs-xs);
+  text-decoration: none;
+  font-weight: 600;
+  border-radius: var(--pill);
+  transition: all .15s ease;
+}
+.lt-orig-btn:hover {
+  background: var(--sec, var(--red));
+  color: var(--on-sec, #fff) !important;
+}
+dialog.texto[data-lt-tema="escuro"] .lt-orig-btn,
+dialog.leitura[data-lt-tema="escuro"] .lt-orig-btn,
+dialog.texto[data-lt-tema="escuro"] .lt-orig,
+dialog.leitura[data-lt-tema="escuro"] .lt-orig {
+  color: #EAE5DB !important;
+  border-color: #EAE5DB !important;
+  background: #22201D !important;
+}
+dialog.texto[data-lt-tema="escuro"] .lt-orig-btn:hover,
+dialog.leitura[data-lt-tema="escuro"] .lt-orig-btn:hover,
+dialog.texto[data-lt-tema="escuro"] .lt-orig:hover,
+dialog.leitura[data-lt-tema="escuro"] .lt-orig:hover {
+  background: #EAE5DB !important;
+  color: #161513 !important;
+}
+
+
+
+/* Convite Compartilhável Faixa Oculta */
+.ag-btn-convite {
+  border: 1px solid var(--ink) !important;
+  background: transparent !important;
+  padding: 3px 9px !important;
+  border-radius: var(--pill) !important;
+  font: 600 var(--fs-xs) var(--f-mono) !important;
+  cursor: pointer;
+  transition: all .15s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--ink) !important;
+  text-decoration: none;
+}
+.ag-btn-convite:hover {
+  background: var(--ink) !important;
+  color: var(--paper) !important;
+}
+.ag-btn-convite.mini {
+  padding: 2px 7px !important;
+  font-size: 11px !important;
+}
+dialog.texto.convite-dlg {
+  width: min(660px, calc(100% - 24px));
+  max-height: min(90vh, 820px);
+  padding: 0;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.22);
+  border-radius: 6px;
+  overflow-y: auto;
+}
+.convite-container {
+  padding: clamp(20px, 4vw, 32px);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.convite-topo-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 8px;
+}
+.convite-selo {
+  font: 700 var(--fs-xs) var(--f-mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+}
+.convite-fechar {
+  background: none;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  color: var(--muted);
+  padding: 0 4px;
+  line-height: 1;
+}
+.convite-fechar:hover {
+  color: var(--ink);
+}
+.convite-tit {
+  font: 800 clamp(20px, 3.2vw, 28px)/1.2 var(--f-display);
+  margin: 0;
+  letter-spacing: -.02em;
+}
+.convite-chamada {
+  font-size: var(--fs-s);
+  color: var(--sec);
+  font-style: italic;
+  margin: -6px 0 0;
+}
+.convite-grid-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  background: var(--card-bg, rgba(0, 0, 0, 0.03));
+  border: 1px solid var(--rule);
+  padding: 12px 16px;
+  border-radius: 4px;
+}
+.convite-info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--fs-s);
+}
+.convite-info-item .lbl {
+  font: 700 var(--fs-xs) var(--f-mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.convite-secao-tit {
+  font: 700 var(--fs-xs) var(--f-mono);
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .05em;
+  margin: 6px 0 2px;
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 4px;
+}
+.convite-desc {
+  font-size: var(--fs-m);
+  line-height: 1.5;
+  margin: 0;
+}
+.convite-artistas-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.convite-review-box {
+  background: var(--card-bg, rgba(0,0,0,0.02));
+  border-left: 3px solid var(--ink);
+  padding: 10px 14px;
+  font-size: var(--fs-s);
+  font-style: italic;
+  margin: 0;
+}
+.convite-review-fontes {
+  display: block;
+  font-style: normal;
+  font: 600 var(--fs-xs) var(--f-mono);
+  color: var(--muted);
+  margin-top: 4px;
+}
+.convite-acoes-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding-top: 14px;
+  border-top: 1px solid var(--rule);
+  margin-top: 4px;
+}
+.convite-btn-acao {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 4px;
+  font: 600 var(--fs-s) var(--f-mono);
+  cursor: pointer;
+  border: 1px solid var(--rule);
+  background: var(--paper);
+  color: var(--ink);
+  transition: all .15s ease;
+  text-decoration: none;
+}
+.convite-btn-acao.destaque {
+  background: var(--ink, #161412) !important;
+  color: var(--paper, #F6F1E7) !important;
+  border-color: var(--ink, #161412) !important;
+}
+.convite-btn-acao:hover {
+  filter: brightness(0.92);
+}
+
 </style>
 
 <header class="mast">
@@ -940,6 +1324,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
 <dialog class="leitura" id="leitura" aria-label="Página do disco"></dialog>
 <dialog class="texto" id="texto" aria-label="Leitura"></dialog>
 <dialog class="texto ida-dlg" id="dlg-ida" aria-labelledby="dlg-ida-tit"></dialog>
+<dialog class="texto convite-dlg" id="dlg-convite" aria-labelledby="dlg-convite-tit"></dialog>
 
 <aside class="dock" id="dock" hidden aria-label="Player">
   <div class="wrap">
@@ -1003,7 +1388,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     },
   };
   const COLS_REV = ["cine_edicoes", "cine_itens", "cine_guias", "livro_edicoes", "livro_itens", "livro_guias", "leituras"];
-  const S = { db: null, uid: null, edicoes: [], itens: [], guias: [], semanas: [], cultura: [], dias: [], cine_edicoes: [], cine_itens: [], cine_guias: [], livro_edicoes: [], livro_itens: [], livro_guias: [], leituras: [], selRev: {}, agenda: null, agQuando: "mes", agOnde: "todos", agTipo: "todos", agQ: "", agAbertos: {}, agRasc: {}, agNota: null, agDispOpen: false, agInfo: {}, agPlInfo: false, agArtistas: {}, agArtistasYT: {}, comentarios: {}, marcasEm: {}, idasMod: {}, idasDel: {}, notasNovas: [], fIda: { ano: String(new Date().getFullYear()), tipo: "todos" }, notaMsg: "", loaded: {}, marcas: {}, aval: {}, avalEm: {}, sel: null, selSem: null, selDia: null, aba: "hoje", filtro: "tudo", podeMarcar: false, falhou: false };
+  const S = { db: null, uid: null, edicoes: [], itens: [], guias: [], semanas: [], cultura: [], dias: [], cine_edicoes: [], cine_itens: [], cine_guias: [], livro_edicoes: [], livro_itens: [], livro_guias: [], leituras: [], selRev: {}, agenda: null, agQuando: "mes", agOnde: "todos", agTipo: "todos", agQ: "", agAbertos: {}, agRasc: {}, agNota: null, agDispOpen: false, agInfo: {}, agPlInfo: false, agArtistas: {}, agArtistasYT: {}, comentarios: {}, marcasEm: {}, idasMod: {}, idasDel: {}, notasNovas: [], fIda: { ano: String(new Date().getFullYear()), tipo: "todos" }, notaMsg: "", loaded: {}, marcas: {}, aval: {}, avalEm: {}, sel: null, selSem: null, selDia: null, aba: "hoje", filtro: "tudo", podeMarcar: false, falhou: false, noticiasSalvas: {}, filtroSalvas: false };
   const ABAS = [["hoje", "hoje"], ["noticias", "semana"], ["musica", "música"], ["filmes", "filmes"], ["livros", "livros"], ["agenda", "agenda"], ["arquivo", "arquivo"]];
   const DSEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
@@ -1474,6 +1859,230 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     return [head, blocoFds, ...blocos, fim, ...blocoTemas()];
   }
 
+  // Modo Leitor: Preferências do usuário (persistidas em localStorage)
+  let leitorPrefs = {
+    fonte: "serif",
+    tam: 17,
+    tema: (window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches) ? "escuro" : "creme"
+  };
+  try {
+    const s = localStorage.getItem("fo_leitor_prefs");
+    if (s) leitorPrefs = { ...leitorPrefs, ...JSON.parse(s) };
+  } catch (e) {}
+
+  function salvarLeitorPrefs() {
+    try {
+      localStorage.setItem("fo_leitor_prefs", JSON.stringify(leitorPrefs));
+    } catch (e) {}
+    aplicarLeitorPrefs();
+  }
+
+  function aplicarLeitorPrefs() {
+    const fontesMap = {
+      serif: 'var(--f-body, "Newsreader", Georgia, serif)',
+      sans: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+      mono: 'var(--f-mono, "IBM Plex Mono", monospace)'
+    };
+    const temasMap = {
+      creme: { bg: "#F3EEE4", fg: "#1C1A17", card: "#EAE3D2", rule: "#D4CBBA", muted: "#666055" },
+      escuro: { bg: "#161513", fg: "#EAE5DB", card: "#22201C", rule: "#3E3830", muted: "#9C9588" },
+      alvo: { bg: "#FFFFFF", fg: "#111111", card: "#F5F5F5", rule: "#E0E0E0", muted: "#666666" }
+    };
+
+    const root = document.documentElement;
+    root.style.setProperty("--lt-font", fontesMap[leitorPrefs.fonte] || fontesMap.serif);
+    root.style.setProperty("--lt-size", `${leitorPrefs.tam}px`);
+    root.style.setProperty("--lt-lh", leitorPrefs.tam >= 20 ? "1.75" : "1.65");
+
+    const t = temasMap[leitorPrefs.tema] || temasMap.creme;
+    root.style.setProperty("--lt-bg", t.bg);
+    root.style.setProperty("--lt-fg", t.fg);
+    root.style.setProperty("--lt-card", t.card);
+    root.style.setProperty("--lt-rule", t.rule);
+    root.style.setProperty("--lt-muted", t.muted);
+    for (const id of ["texto", "leitura", "dlg-convite"]) { const dl = document.getElementById(id); if (dl) dl.dataset.ltTema = leitorPrefs.tema; }
+  }
+
+  function barraControlesLeitor(aoMudar) {
+    return h("div", { class: "lt-controles mono" },
+      h("div", { class: "lt-grupo-ctrl" },
+        h("span", { class: "lt-lbl-ctrl" }, "Fonte:"),
+        h("button", {
+          type: "button",
+          class: `lt-btn-ctrl ${leitorPrefs.fonte === "serif" ? "ativo" : ""}`,
+          onclick: () => { leitorPrefs.fonte = "serif"; salvarLeitorPrefs(); if (aoMudar) aoMudar(); }
+        }, "Serif"),
+        h("button", {
+          type: "button",
+          class: `lt-btn-ctrl ${leitorPrefs.fonte === "sans" ? "ativo" : ""}`,
+          onclick: () => { leitorPrefs.fonte = "sans"; salvarLeitorPrefs(); if (aoMudar) aoMudar(); }
+        }, "Sans"),
+        h("button", {
+          type: "button",
+          class: `lt-btn-ctrl ${leitorPrefs.fonte === "mono" ? "ativo" : ""}`,
+          onclick: () => { leitorPrefs.fonte = "mono"; salvarLeitorPrefs(); if (aoMudar) aoMudar(); }
+        }, "Mono")
+      ),
+      h("div", { class: "lt-grupo-ctrl" },
+        h("span", { class: "lt-lbl-ctrl" }, "Tamanho:"),
+        h("button", {
+          type: "button",
+          class: "lt-btn-ctrl",
+          disabled: leitorPrefs.tam <= 14,
+          title: "Diminuir fonte",
+          onclick: () => {
+            if (leitorPrefs.tam > 14) {
+              leitorPrefs.tam -= 2;
+              salvarLeitorPrefs();
+              if (aoMudar) aoMudar();
+            }
+          }
+        }, "A−"),
+        h("span", { class: "lt-tam-val" }, `${leitorPrefs.tam}px`),
+        h("button", {
+          type: "button",
+          class: "lt-btn-ctrl",
+          disabled: leitorPrefs.tam >= 24,
+          title: "Aumentar fonte",
+          onclick: () => {
+            if (leitorPrefs.tam < 24) {
+              leitorPrefs.tam += 2;
+              salvarLeitorPrefs();
+              if (aoMudar) aoMudar();
+            }
+          }
+        }, "A+")
+      ),
+      h("div", { class: "lt-grupo-ctrl" },
+        h("span", { class: "lt-lbl-ctrl" }, "Tema:"),
+        h("button", {
+          type: "button",
+          class: `lt-btn-ctrl ${leitorPrefs.tema === "creme" ? "ativo" : ""}`,
+          title: "Tema Creme (Papel)",
+          onclick: () => { leitorPrefs.tema = "creme"; salvarLeitorPrefs(); if (aoMudar) aoMudar(); }
+        }, "Papel"),
+        h("button", {
+          type: "button",
+          class: `lt-btn-ctrl ${leitorPrefs.tema === "escuro" ? "ativo" : ""}`,
+          title: "Tema Escuro (Leitura Noturna)",
+          onclick: () => { leitorPrefs.tema = "escuro"; salvarLeitorPrefs(); if (aoMudar) aoMudar(); }
+        }, "Escuro"),
+        h("button", {
+          type: "button",
+          class: `lt-btn-ctrl ${leitorPrefs.tema === "alvo" ? "ativo" : ""}`,
+          title: "Tema Branco Puro",
+          onclick: () => { leitorPrefs.tema = "alvo"; salvarLeitorPrefs(); if (aoMudar) aoMudar(); }
+        }, "Branco")
+      )
+    );
+  }
+
+  function chaveNota(n, d) {
+    const dt = str(d && (d.data || d._id));
+    const tit = str(n && n.titulo);
+    return `${dt}:::${tit}`;
+  }
+  function isNotaSalva(n, d) {
+    const k = chaveNota(n, d);
+    return Boolean(S.noticiasSalvas && S.noticiasSalvas[k]);
+  }
+  function toggleSalvarNoticia(n, d) {
+    const k = chaveNota(n, d);
+    if (!S.noticiasSalvas) S.noticiasSalvas = {};
+    if (S.noticiasSalvas[k]) {
+      delete S.noticiasSalvas[k];
+    } else {
+      S.noticiasSalvas[k] = {
+        chave: k,
+        data_boletim: d ? (d.data || d._id) : "",
+        rotulo_boletim: d ? rotuloBoletim(d) : "",
+        salvo_em: new Date().toISOString(),
+        nota: n,
+        boletim: d ? { _id: d._id, data: d.data, edicao: d.edicao, titulo: d.titulo } : null
+      };
+    }
+    try {
+      localStorage.setItem("faixa_noticias_salvas", JSON.stringify(S.noticiasSalvas));
+    } catch (e) {}
+    render();
+  }
+  function toggleVozNota(n, btn) {
+    if (!('speechSynthesis' in window)) {
+      alert("Seu navegador não possui suporte para síntese de voz (Web Speech API).");
+      return;
+    }
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+      if (btn && btn.classList.contains("falando")) {
+        btn.classList.remove("falando");
+        btn.textContent = "🔊 Ouvir matéria";
+        return;
+      }
+    }
+    const partes = [];
+    if (n.editoria) partes.push(n.editoria + ".");
+    if (n.titulo) partes.push(n.titulo + ".");
+    if (n.texto) partes.push(n.texto);
+    if (n.analise) partes.push(`Análise: ${n.analise}`);
+    if (n.por_que_importa) partes.push(`Por que importa: ${n.por_que_importa}`);
+    const txt = partes.join(" \n ");
+    const utter = new SpeechSynthesisUtterance(txt);
+    utter.lang = "pt-BR";
+    utter.rate = 1.03;
+    const voices = speechSynthesis.getVoices().filter((v) => v.lang && v.lang.startsWith("pt"));
+    if (voices.length) utter.voice = voices[0];
+    const resetBtns = () => {
+      document.querySelectorAll(".d-btn-ouvir-nota.falando").forEach((b) => {
+        b.classList.remove("falando");
+        b.textContent = "🔊 Ouvir matéria";
+      });
+    };
+    resetBtns();
+    utter.onend = () => resetBtns();
+    utter.onerror = () => resetBtns();
+    if (btn) {
+      btn.classList.add("falando");
+      btn.textContent = "⏹ Parar áudio";
+    }
+    speechSynthesis.speak(utter);
+  }
+
+  let audioNarracaoAtiva = false;
+  function toggleVozNavegador(d, btn) {
+    if (!('speechSynthesis' in window)) {
+      alert("Seu navegador não possui suporte para síntese de voz (Web Speech API).");
+      return;
+    }
+    if (speechSynthesis.speaking) {
+      speechSynthesis.cancel();
+      audioNarracaoAtiva = false;
+      if (btn) { btn.classList.remove("falando"); btn.textContent = "🔊 Ouvir com voz do navegador"; }
+      return;
+    }
+    const partes = [];
+    partes.push(`Faixa Oculta apresenta o boletim diário de notícias. ${rotuloBoletim(d)}.`);
+    if (d.titulo) partes.push(d.titulo + ".");
+    if (d.resumo_dia) partes.push(d.resumo_dia);
+    for (const n of arr(d.notas)) {
+      if (n.editoria) partes.push(n.editoria + ".");
+      if (n.titulo) partes.push(n.titulo + ".");
+      if (n.texto) partes.push(n.texto);
+      if (n.por_que_importa) partes.push(`Por que importa: ${n.por_que_importa}`);
+    }
+    const txtCompleto = partes.join(" \n ");
+    const utter = new SpeechSynthesisUtterance(txtCompleto);
+    utter.lang = "pt-BR";
+    utter.rate = 1.03;
+    const voices = speechSynthesis.getVoices().filter((v) => v.lang && v.lang.startsWith("pt"));
+    if (voices.length) utter.voice = voices[0];
+    utter.onend = () => { audioNarracaoAtiva = false; if (btn) { btn.classList.remove("falando"); btn.textContent = "🔊 Ouvir com voz do navegador"; } };
+    utter.onerror = () => { audioNarracaoAtiva = false; if (btn) { btn.classList.remove("falando"); btn.textContent = "🔊 Ouvir com voz do navegador"; } };
+    audioNarracaoAtiva = true;
+    if (btn) { btn.classList.add("falando"); btn.textContent = "⏹ Parar narração de voz"; }
+    speechSynthesis.speak(utter);
+  }
+
+
   function diaAtual() { return S.dias.find((d) => d._id === S.selDia) || S.dias[0]; }
   function rotuloDia(iso) {
     const m = str(iso).match(/^(\d{4})-(\d{2})-(\d{2})$/);
@@ -1483,28 +2092,75 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
   function turnoDia(d) { return d && d.edicao === "noite" ? "noite" : d && d.edicao === "manha" ? "manhã" : ""; }
   function chaveDia(d) { return str(d.data || d._id) + (d.edicao === "noite" ? "~2" : "~1"); }
   function rotuloBoletim(d) { const t = turnoDia(d); return rotuloDia(d.data || d._id) + (t ? ` · ${t}` : ""); }
+  // Leitor da nota: usa só o que a Faixa Oculta escreveu (resumo, como noticiaram, análise), com os controles de fonte/tamanho/tema.
+  function abrirNota(n, d) {
+    aplicarLeitorPrefs();
+    const t = document.getElementById("texto");
+    const redesenhar = () => abrirNota(n, d);
+    t.replaceChildren(h("div", { class: "lt-box" },
+      h("div", { class: "lt-bar" }, h("span", { class: "mono" }, `${str(n.editoria)} · ${d ? rotuloBoletim(d) : "Boletim"}`),
+        h("button", { class: "l-btn", type: "button", onclick: () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); t.close(); }, "aria-label": "Fechar" }, "Fechar ×")),
+      barraControlesLeitor(redesenhar),
+      h("h2", { class: "lt-tit" }, str(n.titulo)),
+      ...str(n.texto).split("\n\n").filter(Boolean).map((p) => h("p", null, p)),
+      n.como_noticiaram ? [h("h4", { class: "mono" }, "Como os veículos noticiaram"), h("p", null, str(n.como_noticiaram))] : null,
+      n.analise ? [h("h4", { class: "mono" }, "Análise"), h("p", null, str(n.analise))] : null,
+      n.por_que_importa ? h("p", { class: "ponte" }, h("b", null, "Por que importa: "), str(n.por_que_importa)) : null,
+      arr(n.fontes).length ? h("ul", { class: "d-fontes" }, arr(n.fontes).map((f) => h("li", null, fonteLink(f.url, str(f.fonte)), f.perfil ? h("span", { class: "mono" }, ` · ${str(f.perfil)}`) : null))) : null,
+      h("div", { class: "d-nota-acts" },
+        h("button", { class: `d-btn-salvar mono ${isNotaSalva(n, d) ? "salva" : ""}`, type: "button", onclick: () => { toggleSalvarNoticia(n, d); redesenhar(); } }, isNotaSalva(n, d) ? "✓ Salva" : "🔖 Salvar"),
+        h("button", { class: "d-btn-ouvir-nota mono", type: "button", onclick: (e) => toggleVozNota(n, e.currentTarget) }, "🔊 Ouvir matéria")),
+      h("p", { class: "lt-aviso mono" }, "Resumo da Faixa Oculta com base nas reportagens citadas. Para a íntegra, use os links das fontes.")));
+    if (!t.open) t.showModal();
+    t.querySelector(".l-btn").focus({ preventScroll: true });
+  }
   function blocoHoje() {
     if (!S.loaded.dias) return [estado("abrindo o boletim", "As notícias do dia aparecem aqui assim que o arquivo da revista responder.")];
     const d = diaAtual();
     if (!d) return [estado("nenhum boletim ainda", "O boletim aparece aqui de manhã e no fim da tarde.")];
     const notas = arr(d.notas);
+    const totalSalvas = Object.keys(S.noticiasSalvas || {}).length;
+    const gruposMes = {};
+    for (const x of S.dias) { const m = str(x.data || x._id).slice(0, 7); (gruposMes[m] = gruposMes[m] || []).push(x); }
+    const chavesMes = Object.keys(gruposMes).sort().reverse();
+    const opt = (x) => h("option", { value: x._id, selected: x._id === d._id }, rotuloBoletim(x));
+    const optKids = chavesMes.length <= 1 ? S.dias.map(opt)
+      : chavesMes.map((m) => h("optgroup", { label: `Edições de ${m.slice(5, 7)}/${m.slice(0, 4)}` }, gruposMes[m].map(opt)));
+    const seletorEdicoes = h("div", { class: "d-edsel-box" },
+      S.dias.length > 1 ? h("label", { class: "d-edsel-label mono" }, h("span", { class: "d-edsel-txt" }, "Edições:"),
+        h("select", { class: "d-edsel-select mono", "aria-label": "Selecionar edição do boletim",
+          onchange: (e) => { S.selDia = e.target.value; S.filtroSalvas = false; render(); window.scrollTo(0, 0); } }, optKids)) : null,
+      h("button", { class: `d-btn-filtro-salvas mono ${S.filtroSalvas ? "ativo" : ""}`, type: "button", title: "Ver matérias que você salvou",
+        onclick: () => { S.filtroSalvas = !S.filtroSalvas; render(); } }, `🔖 Notícias salvas (${totalSalvas})`));
     const head = h("section", { class: "wrap d-head" },
       h("div", { style: "min-width:0" },
         h("div", { class: "kicker mono" }, `${d.edicao === "noite" ? "Boletim da noite" : "Boletim diário"} · ${rotuloDia(d.data || d._id)}`),
         h("h2", null, str(d.titulo)),
         d.resumo_dia ? h("p", { class: "lede" }, str(d.resumo_dia)) : null,
-        S.dias.length > 1 ? h("div", { class: "d-dias", role: "group", "aria-label": "Boletins anteriores" }, S.dias.slice(0, 10).map((x) =>
-          h("button", { class: "chip", type: "button", "aria-pressed": String(x._id === d._id), onclick: () => { S.selDia = x._id; render(); window.scrollTo(0, 0); } }, rotuloBoletim(x)))) : null),
+        seletorEdicoes),
       arr(d.agenda).length ? h("aside", { class: "d-agenda" }, h("h4", null, "Para acompanhar"),
         h("ul", null, arr(d.agenda).map((a) => h("li", null, h("span", { class: "mono" }, str(a.quando)), h("span", null, str(a.o_que)))))) : null);
-    const grade = h("section", { class: "wrap", style: "padding-bottom:24px" }, h("div", { class: "d-notas" }, notas.map((n) => h("article", { class: "d-nota" },
-      h("span", { class: "edt" }, str(n.editoria)),
+    let itens;
+    if (S.filtroSalvas) {
+      itens = Object.values(S.noticiasSalvas || {}).filter((s) => s && s.nota).sort((a, b) => String(b.salvo_em || "").localeCompare(String(a.salvo_em || "")))
+        .map((s) => ({ n: s.nota, bol: (s.boletim && s.boletim._id && S.dias.find((x) => x._id === s.boletim._id)) || s.boletim || d, rot: s.rotulo_boletim || "" }));
+      if (!itens.length) return [head, h("section", { class: "wrap", style: "padding:40px 0 64px" }, estado("nenhuma matéria salva", "Toque em “🔖 Salvar” numa notícia do boletim para guardá-la aqui. As salvas ficam só neste navegador."))];
+    } else itens = notas.map((n) => ({ n, bol: d, rot: "" }));
+    const grade = h("section", { class: "wrap", style: "padding-bottom:24px" },
+      S.filtroSalvas ? h("div", { class: "d-salvas-topo" }, h("h3", null, `Suas matérias salvas (${itens.length})`),
+        h("button", { class: "d-btn-filtro-salvas mono", type: "button", onclick: () => { S.filtroSalvas = false; render(); } }, "Voltar ao boletim ✕")) : null,
+      h("div", { class: "d-notas" }, itens.map(({ n, bol, rot }) => h("article", { class: "d-nota" },
+      h("span", { class: "edt" }, str(n.editoria)), rot ? h("span", { class: "mono", style: "float:right;font-size:var(--fs-xs);color:var(--muted)" }, rot) : null,
       h("h3", null, str(n.titulo)),
       h("p", null, str(n.texto)),
       n.como_noticiaram ? h("div", { class: "d-cob" }, h("h4", { class: "mono" }, "Como os veículos noticiaram"), h("p", null, str(n.como_noticiaram))) : null,
       n.analise ? h("div", { class: "d-ana" }, h("h4", { class: "mono" }, "Análise"), h("p", null, str(n.analise))) : null,
       n.por_que_importa ? h("p", { class: "ponte" }, h("b", null, "Por que importa: "), str(n.por_que_importa)) : null,
-      h("div", { class: "d-rate" }, h("span", null, "Quer mais deste assunto?"), avaliacao(`nota:${d._id}:${str(n.id) || str(n.titulo)}`)),
+      h("div", { class: "d-nota-acts" },
+        h("button", { class: "ler", type: "button", onclick: () => abrirNota(n, bol) }, "Abrir no leitor"),
+        h("button", { class: `d-btn-salvar mono ${isNotaSalva(n, bol) ? "salva" : ""}`, type: "button", onclick: () => toggleSalvarNoticia(n, bol) }, isNotaSalva(n, bol) ? "✓ Salva" : "🔖 Salvar"),
+        h("button", { class: "d-btn-ouvir-nota mono", type: "button", onclick: (e) => toggleVozNota(n, e.currentTarget) }, "🔊 Ouvir matéria")),
+      h("div", { class: "d-rate" }, h("span", null, "Quer mais deste assunto?"), avaliacao(`nota:${str(bol._id || d._id)}:${str(n.id) || str(n.titulo)}`)),
       arr(n.fontes).length ? h("ul", { class: "d-fontes" }, arr(n.fontes).map((f) => h("li", null,
         fonteLink(f.url, str(f.fonte)), f.perfil ? h("span", { class: "mono" }, ` · ${str(f.perfil)}`) : null,
         f.enfoque ? h("small", null, str(f.enfoque)) : null))) : null))));
@@ -2130,7 +2786,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
           })) : null,
           comArt || info ? refsDoPick(ev, d) : null,
           linkRevista(...arr(d.artistas), d.titulo, d.tituloBusca),
-          marcasAgenda(key, true),
+          (() => { const m = marcasAgenda(key, true); m.append(h("button", { type: "button", class: "ag-btn-convite mini mono", title: "Criar convite para esta atração", onclick: () => abrirConvite(ev, d) }, "✉️ Convidar")); return m; })(),
           editorNota(key, d.titulo)));
       }
       if (corta) box.append(h("button", { class: "ag-tog ag-mais", type: "button", "aria-expanded": String(aberto), onclick: () => { S.agAbertos[ev.id] = !aberto; render(); } }, aberto ? `Mostrar só os ${PICKS_VIS} primeiros` : `Ver todos os ${lista.length} (mais ${lista.length - PICKS_VIS})`));
@@ -2165,6 +2821,183 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
   // One event card; also used by the semana tab (where no agenda filter applies).
   // Listings-guide layout: coloured date block, then title, a where line, a when/price line, the radar's reason,
   // links and artist chips, marks; the synopsis is clamped to two lines until "Detalhes" opens it.
+  function abrirConvite(ev, d) {
+    if (!ev && !d) return;
+    const evId = d ? `${ev.id}__${d.id}` : ev.id;
+    const titulo = str(d ? d.titulo : ev.titulo);
+    const local = str((d && d.local) || ev.local || "Rio de Janeiro");
+    const bairro = str((d && d.sessoes && d.sessoes[0] && d.sessoes[0].bairro) || ev.bairro || "Rio de Janeiro");
+    const tipo = TIPOS_AG[ev.tipo] || "evento cultural";
+    
+    let sessoes = [];
+    if (d && arr(d.sessoes).length) {
+      sessoes = arr(d.sessoes);
+    } else if (arr(ev.destaques).length) {
+      for (const pick of ev.destaques) {
+        if (arr(pick.sessoes).length) sessoes.push(...pick.sessoes);
+      }
+    }
+    
+    let artistas = [];
+    if (d && arr(d.artistas).length) {
+      artistas = arr(d.artistas);
+    } else if (arr(ev.artistas).length) {
+      artistas = arr(ev.artistas);
+    } else if (arr(ev.destaques).length) {
+      for (const pick of ev.destaques) {
+        if (arr(pick.artistas).length) artistas.push(...pick.artistas);
+      }
+    }
+    artistas = [...new Set(artistas.map(str).filter(Boolean))];
+
+    const preco = str((d && d.sessoes && d.sessoes[0] && d.sessoes[0].obs) || d?.preco || ev.preco || "");
+    const linkIngresso = safeUrl((d && d.sessoes && d.sessoes[0] && d.sessoes[0].link) || d?.link || ev.link || "");
+    const linkMapa = AGU.mapa(`${local}, ${bairro}, Rio de Janeiro`);
+    const linkTrailer = safeUrl(d?.trailer || ev.trailer || "");
+    const reviews = d?.reviews || ev.reviews || null;
+    const porque = str(d?.porque || ev.porque || ev.sobre || "");
+
+    const urlConvite = `${window.location.origin}${window.location.pathname}#convite=${encodeURIComponent(evId)}`;
+    const dlg = document.getElementById("dlg-convite");
+    if (!dlg) return;
+
+    let statusCopia = null;
+
+    const renderConteudo = () => {
+      dlg.replaceChildren(h("div", { class: "convite-container" },
+        h("div", { class: "convite-topo-bar" },
+          h("span", { class: "convite-selo mono" }, `FAIXA OCULTA · CONVITE CULTURAL · ${tipo.toUpperCase()}`),
+          h("button", { class: "convite-fechar", type: "button", onclick: () => dlg.close(), "aria-label": "Fechar" }, "×")),
+        
+        h("h2", { class: "convite-tit" }, titulo),
+        h("p", { class: "convite-chamada" }, "Você foi convidado(a) para este evento pelo Radar Cultural Faixa Oculta"),
+
+        h("div", { class: "convite-grid-info" },
+          h("div", { class: "convite-info-item" },
+            h("span", { class: "lbl" }, "📍 Onde"),
+            h("b", null, local),
+            bairro ? h("span", { style: "color:var(--muted);font-size:var(--fs-xs);" }, bairro) : null,
+            h("a", { href: linkMapa, target: "_blank", rel: "noopener", style: "font-size:var(--fs-xs);margin-top:2px;" }, "Abrir no Google Maps ↗")),
+          h("div", { class: "convite-info-item" },
+            h("span", { class: "lbl" }, "📅 Quando"),
+            sessoes.length ? h("ul", { style: "list-style:none;margin:0;padding:0;display:grid;gap:2px;" },
+              sessoes.slice(0, 3).map((s) => h("li", null, h("b", null, agRotulo(s.data, s.hora)), s.obs ? h("span", { style: "color:var(--muted);font-size:var(--fs-xs);display:block;" }, s.obs) : null))
+            ) : h("b", null, str(ev.quando || "Consulte a programação"))),
+          preco || linkIngresso ? h("div", { class: "convite-info-item" },
+            h("span", { class: "lbl" }, "🎟️ Ingressos"),
+            preco ? h("span", null, preco) : null,
+            linkIngresso ? h("a", { href: linkIngresso, target: "_blank", rel: "noopener", style: "font-weight:700;font-size:var(--fs-xs);margin-top:2px;" }, "Comprar ingresso / Info ↗") : null
+          ) : null),
+
+        porque ? [
+          h("h4", { class: "convite-secao-tit" }, "Por que ir / O que esperar"),
+          h("p", { class: "convite-desc" }, porque)
+        ] : null,
+
+        artistas.length ? [
+          h("h4", { class: "convite-secao-tit" }, `Line-up & Ouça as bandas (${artistas.length})`),
+          h("div", { class: "convite-artistas-lista" }, artistas.map((nome) => chipArtista(nome)))
+        ] : null,
+
+        reviews && reviews.texto ? [
+          h("h4", { class: "convite-secao-tit" }, "Recepção Crítica"),
+          h("div", { class: "convite-review-box" },
+            h("p", null, `“${reviews.texto}”`),
+            arr(reviews.fontes).length ? h("span", { class: "convite-review-fontes" }, `Fontes: ${arr(reviews.fontes).map((f) => typeof f === "string" ? f : (f.nome || "")).filter(Boolean).join(", ")}`) : null)
+        ] : null,
+
+        linkTrailer ? [
+          h("h4", { class: "convite-secao-tit" }, "Vídeo / Apresentação"),
+          h("div", { style: "margin:4px 0;" },
+            h("a", { href: linkTrailer, target: "_blank", rel: "noopener", class: "convite-btn-acao" }, "▶ Assistir no YouTube ↗"))
+        ] : null,
+
+        statusCopia ? h("div", { style: "padding:8px 12px;background:#eef6ee;border:1px solid #c2e2c2;color:#1e5e1e;border-radius:4px;font-size:var(--fs-s);font-weight:600;" }, statusCopia) : null,
+
+        h("div", { class: "convite-acoes-bar" },
+          h("button", {
+            type: "button",
+            class: "convite-btn-acao destaque",
+            onclick: () => {
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(urlConvite).then(() => {
+                  statusCopia = "✓ Link de convite copiado para a área de transferência!";
+                  renderConteudo();
+                  setTimeout(() => { statusCopia = null; renderConteudo(); }, 3500);
+                }).catch(() => {
+                  prompt("Copie o link abaixo:", urlConvite);
+                });
+              } else {
+                prompt("Copie o link abaixo:", urlConvite);
+              }
+            }
+          }, "🔗 Copiar link de convite"),
+
+          h("a", {
+            class: "convite-btn-acao",
+            target: "_blank",
+            rel: "noopener",
+            href: `https://api.whatsapp.com/send?text=${encodeURIComponent(`Bora nesse show? 🎵\n\n*${titulo}*\n📍 ${local}\n📅 ${sessoes.length ? agRotulo(sessoes[0].data, sessoes[0].hora) : str(ev.quando || "")}\n\nOuça as bandas e veja a programação completa no convite:\n${urlConvite}`)}`
+          }, "💬 Enviar pelo WhatsApp"),
+
+          navigator.share ? h("button", {
+            type: "button",
+            class: "convite-btn-acao",
+            onclick: () => {
+              navigator.share({
+                title: `Convite: ${titulo}`,
+                text: `Bora nesse show? ${titulo} no ${local}.`,
+                url: urlConvite
+              }).catch(() => {});
+            }
+          }, "📤 Compartilhar") : null,
+
+          h("button", {
+            type: "button",
+            class: "convite-btn-acao",
+            onclick: () => dlg.close()
+          }, "Fechar")
+        )
+      ));
+    };
+
+    renderConteudo();
+    if (!dlg.open) dlg.showModal();
+    dlg.scrollTop = 0;
+
+    history.replaceState(null, "", `#convite=${encodeURIComponent(evId)}`);
+    dlg.onclose = () => {
+      if (window.location.hash.startsWith("#convite=")) {
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+      }
+    };
+  }
+
+  function checarDeepLinkConvite() {
+    const hash = window.location.hash || "";
+    const search = new URLSearchParams(window.location.search);
+    let convId = search.get("convite");
+    if (!convId && hash.startsWith("#convite=")) {
+      convId = decodeURIComponent(hash.slice(9));
+    }
+    if (!convId || !S.agenda?.eventos) return;
+
+    for (const ev of arr(S.agenda.eventos)) {
+      if (ev.id === convId) {
+        setTimeout(() => abrirConvite(ev, null), 150);
+        return;
+      }
+      for (const d of arr(ev.destaques)) {
+        if (d.id === convId || `${ev.id}__${d.id}` === convId) {
+          setTimeout(() => abrirConvite(ev, d), 150);
+          return;
+        }
+      }
+    }
+  }
+
+
+
   function cardEvento(ev) {
     const tipo = TIPOS_AG[ev.tipo] ? ev.tipo : "outros", dec = decisaoRadar(ev.id);
     const t = agHoje(), fim = agD(ev.fim), ini = agD(ev.inicio);
@@ -2176,6 +3009,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
     const link = safeUrl(ev.link), info = !!S.agInfo[ev.id], temDet = agTemDetalhes(ev);
     const marcas = marcasAgenda(ev.id);
     if (temDet) marcas.append(h("button", { type: "button", class: "ag-det", "aria-expanded": String(info), onclick: () => { S.agInfo[ev.id] = !info; render(); } }, info ? "Menos detalhes" : "Detalhes"));
+    marcas.append(h("button", { type: "button", class: "ag-btn-convite mono", title: "Criar convite e compartilhar este evento", onclick: () => abrirConvite(ev, null) }, "✉️ Convidar"));
     const onde = [ev.local, ev.bairro].map(str).filter(Boolean).join(", "), quando = [ev.quando, ev.preco].map(str).filter(Boolean).join(". ");
     return h("article", { class: "ag-ev" + (dec === "quero" ? " marcado" : "") + (dec ? " d-" + dec : ""), id: `ev-${ev.id}`, style: `--tc:var(--t-${tipo});--tcl:var(--tl-${tipo})` },
       h("div", { class: "ag-data" }, h("span", { class: "k" }, TIPOS_AG[tipo]), h("b", null, ate), h("span", null, resta)),
@@ -3272,8 +4106,10 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
       S.podeMarcar = true;
       try { S.marcas = JSON.parse(localStorage.getItem("fo-marcas") || "{}") || {}; } catch (e) { S.marcas = {}; }
       S.aval = lerLS("fo-aval", {}); S.avalEm = lerLS("fo-aval-em", {});
+      S.noticiasSalvas = lerLS("faixa_noticias_salvas", {});
     } catch (e) { S.falhou = true; }
     render();
+    checarDeepLinkConvite();
     if (GH.cfg) ghLer();
   }
 
@@ -3302,6 +4138,7 @@ footer p { max-width: 80ch; margin: 0 0 var(--sp-1); }
       }, () => {});
     }
     render();
+    checarDeepLinkConvite();
   })();
 })();
 </script>
