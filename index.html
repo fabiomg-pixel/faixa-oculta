@@ -1312,6 +1312,11 @@ dialog.texto:fullscreen .lt-box, dialog.fs-lt .lt-box { max-width: 78ch; margin:
 dialog.texto:fullscreen .lt-box p, dialog.fs-lt .lt-box p { max-width: none; }
 dialog.leitura:fullscreen .l-corpo, dialog.leitura.fs-lt .l-corpo { max-width: 78ch; margin-inline: auto; }
 .d-escopo { display: flex; gap: 8px; flex-wrap: wrap; margin: var(--sp-2) 0; }
+
+/* Imprensa internacional */
+.im .im-orig { font-style: italic; color: var(--muted); font-size: var(--fs-xs); line-height: 1.35; }
+.im-grade .pp-capa b { font-size: 16px; }
+.im-sub { margin: var(--sp-4) 0 var(--sp-2); color: var(--sec); text-transform: uppercase; letter-spacing: .06em; font-size: var(--fs-xs); }
 </style>
 
 <header class="mast">
@@ -2154,6 +2159,47 @@ dialog.leitura:fullscreen .l-corpo, dialog.leitura.fs-lt .l-corpo { max-width: 7
     if (!t.open) t.showModal();
     t.querySelector(".l-btn").focus({ preventScroll: true });
   }
+  // Cartão de nota do boletim (nacional e imprensa internacional): texto, cobertura, análise, ações e fontes.
+  function cardNota(n, bol, rot, d) {
+    return h("article", { class: "d-nota" },
+      h("span", { class: "edt" }, str(n.editoria) || "Mundo"), rot ? h("span", { class: "mono", style: "float:right;font-size:var(--fs-xs);color:var(--muted)" }, rot) : null,
+      h("h3", null, str(n.titulo)),
+      h("p", null, str(n.texto)),
+      n.como_noticiaram ? h("div", { class: "d-cob" }, h("h4", { class: "mono" }, "Como os veículos noticiaram"), h("p", null, str(n.como_noticiaram))) : null,
+      n.analise ? h("div", { class: "d-ana" }, h("h4", { class: "mono" }, "Análise"), h("p", null, str(n.analise))) : null,
+      n.por_que_importa ? h("p", { class: "ponte" }, h("b", null, "Por que importa: "), str(n.por_que_importa)) : null,
+      h("div", { class: "d-nota-acts" },
+        h("button", { class: "ler", type: "button", onclick: () => abrirNota(n, bol) }, "Abrir no leitor"),
+        h("button", { class: `d-btn-salvar mono ${isNotaSalva(n, bol) ? "salva" : ""}`, type: "button", onclick: () => toggleSalvarNoticia(n, bol) }, isNotaSalva(n, bol) ? "✓ Salva" : "🔖 Salvar"),
+        h("button", { class: "d-btn-ouvir-nota mono", type: "button", onclick: (e) => toggleVozNota(n, e.currentTarget) }, "🔊 Ouvir matéria")),
+      h("div", { class: "d-rate" }, h("span", null, "Quer mais deste assunto?"), avaliacao(`nota:${str(bol._id || d._id)}:${str(n.id) || str(n.titulo)}`)),
+      arr(n.fontes).length ? h("ul", { class: "d-fontes" }, arr(n.fontes).map((f) => h("li", null,
+        fonteLink(f.url, str(f.fonte)), f.pais ? h("span", { class: "mono" }, ` · ${str(f.pais)}`) : null, f.perfil ? h("span", { class: "mono" }, ` · ${str(f.perfil)}`) : null,
+        f.enfoque ? h("small", null, str(f.enfoque)) : null))) : null);
+  }
+
+  // Imprensa internacional: manchetes dos grandes jornais estrangeiros e os temas do dia como eles os cobriram.
+  function blocoImprensaMundo(m, d) {
+    if (!m || (!arr(m.capas).length && !arr(m.temas).length)) return null;
+    const capas = arr(m.capas).filter((c) => c && c.jornal && c.manchete);
+    const temas = arr(m.temas).map((t) => Object.assign({ editoria: "Mundo" }, t, { id: "mundo-" + str(t.id || t.titulo) }));
+    return h("section", { class: "wrap secao pp im", id: "imprensa-mundo" },
+      h("div", { class: "sec-head" }, h("span", { class: "num", "aria-hidden": "true" }, capas.length || temas.length),
+        h("h3", null, "imprensa internacional"),
+        h("p", null, str(m.resumo) || "O que os principais jornais do mundo destacaram e como cada um contou.")),
+      capas.length ? h("ol", { class: "pp-grade im-grade" }, capas.map((c) => {
+        const url = safeUrl(c.url) || safeUrl(c.site), img = safeUrl(c.imagem);
+        return h("li", null,
+          h(url ? "a" : "div", { href: url, target: url ? "_blank" : null, rel: url ? "noopener" : null, class: "pp-capa" },
+            img ? h("img", { src: img, alt: `Capa de ${str(c.jornal)}`, loading: "lazy", referrerpolicy: "no-referrer", onerror: (e) => e.target.remove() }) : null,
+            h("span", { class: "pp-jornal mono" }, [str(c.jornal), str(c.pais)].filter(Boolean).join(" · ")),
+            h("b", null, str(c.manchete)),
+            c.original && c.original !== c.manchete ? h("small", { class: "im-orig", lang: str(c.idioma) || null }, str(c.original)) : null));
+      })) : null,
+      temas.length ? [h("h4", { class: "im-sub mono" }, "Os temas do dia na imprensa estrangeira"),
+        h("div", { class: "d-notas" }, temas.map((t) => cardNota(t, d, "", d)))] : null);
+  }
+
   function blocoHoje() {
     if (!S.loaded.dias) return [estado("abrindo o boletim", "As notícias do dia aparecem aqui assim que o arquivo da revista responder.")];
     const d = diaAtual();
@@ -2200,24 +2246,10 @@ dialog.leitura:fullscreen .l-corpo, dialog.leitura.fs-lt .l-corpo { max-width: 7
       filtroEscopo,
       S.filtroSalvas ? h("div", { class: "d-salvas-topo" }, h("h3", null, `Suas matérias salvas (${itens.length})`),
         h("button", { class: "d-btn-filtro-salvas mono", type: "button", onclick: () => { S.filtroSalvas = false; render(); } }, "Voltar ao boletim ✕")) : null,
-      h("div", { class: "d-notas" }, itens.map(({ n, bol, rot }) => h("article", { class: "d-nota" },
-      h("span", { class: "edt" }, str(n.editoria)), rot ? h("span", { class: "mono", style: "float:right;font-size:var(--fs-xs);color:var(--muted)" }, rot) : null,
-      h("h3", null, str(n.titulo)),
-      h("p", null, str(n.texto)),
-      n.como_noticiaram ? h("div", { class: "d-cob" }, h("h4", { class: "mono" }, "Como os veículos noticiaram"), h("p", null, str(n.como_noticiaram))) : null,
-      n.analise ? h("div", { class: "d-ana" }, h("h4", { class: "mono" }, "Análise"), h("p", null, str(n.analise))) : null,
-      n.por_que_importa ? h("p", { class: "ponte" }, h("b", null, "Por que importa: "), str(n.por_que_importa)) : null,
-      h("div", { class: "d-nota-acts" },
-        h("button", { class: "ler", type: "button", onclick: () => abrirNota(n, bol) }, "Abrir no leitor"),
-        h("button", { class: `d-btn-salvar mono ${isNotaSalva(n, bol) ? "salva" : ""}`, type: "button", onclick: () => toggleSalvarNoticia(n, bol) }, isNotaSalva(n, bol) ? "✓ Salva" : "🔖 Salvar"),
-        h("button", { class: "d-btn-ouvir-nota mono", type: "button", onclick: (e) => toggleVozNota(n, e.currentTarget) }, "🔊 Ouvir matéria")),
-      h("div", { class: "d-rate" }, h("span", null, "Quer mais deste assunto?"), avaliacao(`nota:${str(bol._id || d._id)}:${str(n.id) || str(n.titulo)}`)),
-      arr(n.fontes).length ? h("ul", { class: "d-fontes" }, arr(n.fontes).map((f) => h("li", null,
-        fonteLink(f.url, str(f.fonte)), f.perfil ? h("span", { class: "mono" }, ` · ${str(f.perfil)}`) : null,
-        f.enfoque ? h("small", null, str(f.enfoque)) : null))) : null))));
+      h("div", { class: "d-notas" }, itens.map(({ n, bol, rot }) => cardNota(n, bol, rot, d))));
     const fim = h("div", { class: "wrap", style: "padding-block:8px 32px" },
       h("button", { class: "ler", type: "button", onclick: () => trocarAba("noticias") }, "A revista da semana: grandes temas, cobertura e vieses"));
-    return [head, grade, blocoCapas(d.capas), blocoJornais(d.jornais), fim];
+    return [head, grade, blocoCapas(d.capas), blocoImprensaMundo(d.imprensa_mundo, d), blocoJornais(d.jornais), fim];
   }
 
   // Front pages of the day (vercapas.com.br): headline transcribed by the morning routine, cover hotlinked, link to the full page.
