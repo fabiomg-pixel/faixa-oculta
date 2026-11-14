@@ -51,6 +51,15 @@ O leitor é o Fabio, professor de biofísica na UFRJ, no Rio. Português do Bras
 - **Atualize antes de publicar.** Notícia em movimento muda em horas: confira a matéria mais recente de pelo menos dois
   grandes veículos logo antes de gravar, e corrija a nota se a versão mudou.
 
+## 2b. Mundo no mesmo nível do Brasil
+O que vale para as notas nacionais vale para as internacionais: fonte lida, `como_noticiaram`, `analise`, divergências de números e de versão ditas como divergência, leitura limpa das fontes.
+- **Cota:** pelo menos 3 notas de editoria "Mundo" na edição da manhã e 2 na da noite, sempre que houver fato relevante. Elas aparecem no filtro "Mundo" da página.
+- **Fontes:** cada nota de Mundo leva 3 a 5 fontes, e pelo menos 2 delas de veículos estrangeiros (The Guardian, BBC, Al Jazeera, DW, Le Monde, CNN, AP e Reuters via republicação, NYT, Euronews, RTÉ e equivalentes). Os brasileiros (g1, Folha, O Globo, Estadão, Agência Brasil) entram como terceiro olhar, e a nota deve dizer como o recorte brasileiro difere do estrangeiro.
+- **Como achar:** além do WebSearch (em inglês e em português), baixe com curl simples as páginas de seção: `https://www.theguardian.com/world`, `https://www.bbc.com/news/world`, `https://www.aljazeera.com/news/`, `https://www.dw.com/pt-br/`, `https://www.lemonde.fr/international/`, `https://www.euronews.com/news/international`. Se um veículo responder 403, captcha ou paywall, use outro; não contorne.
+- **Leituras:** as páginas estrangeiras abertas entram em `leituras` com resumo em português (paráfrase, no máximo uma citação curta no idioma original). O que só apareceu em título ou resumo de busca vai atribuído ao veículo e registrado em "pulados".
+- **Divergências:** números (mortos, voos, votos, valores), datas e causas variam entre veículos estrangeiros e entre eles e os brasileiros; escreva isso em `como_noticiaram`.
+- **Nomes e lugares:** grafia conforme o uso do português do Brasil, com o nome original na primeira menção quando ajudar.
+
 ## 3. Escrever o documento
 Confira nas páginas abertas os números e as falas de cada nota antes de gravar; o que só aparece em resumo de busca
 vai atribuído ao veículo ("segundo a Reuters...").
@@ -77,7 +86,7 @@ vai atribuído ao veículo ("segundo a Reuters...").
 }
 ```
 - Toda nota tem `como_noticiaram` e `analise`. Se só um veículo cobriu o fato, diga isso em `como_noticiaram`.
-- Notas: 7 a 10 de manhã, 4 a 7 à noite. Agenda com 4 a 6 itens dos próximos dias e semanas.
+- Notas: 7 a 10 de manhã, 4 a 7 à noite, com a cota de Mundo da seção 2b. Agenda com 4 a 6 itens dos próximos dias e semanas.
 - Voz: clara e direta, frases curtas. Evite travessão para apartes, "não é X, é Y", dois-pontos seguidos de revelação,
   "vale notar", "sem dúvida". Paráfrase sempre; nada copiado das fontes.
 - Valide o JSON com python3 e grave com ArtifactData action "set", collection `dias`, doc_id da edição, file_path.

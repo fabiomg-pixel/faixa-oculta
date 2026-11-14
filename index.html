@@ -1294,6 +1294,24 @@ dialog.texto.convite-dlg {
   filter: brightness(0.92);
 }
 
+
+/* Leitor: texto justificado com hifenização e modo tela cheia */
+dialog.texto, dialog.leitura { hyphens: auto; -webkit-hyphens: auto; }
+dialog.texto .lt-box p:not(.lt-aviso):not(.mono):not(.ponte),
+dialog.texto .lt-corpo-completo p,
+dialog.texto .lt-visoes-box p,
+dialog.texto .lt-aprofunda-box p,
+dialog.texto .importa p,
+dialog.leitura .l-texto p,
+dialog.leitura .l-criticas .lc p { text-align: justify !important; text-justify: inter-word; }
+.lt-bar .lt-acoes, .l-bar .lt-acoes { display: inline-flex; gap: 8px; align-items: center; }
+.l-btn.fs-btn { white-space: nowrap; }
+dialog.texto:fullscreen, dialog.leitura:fullscreen, dialog.fs-lt { width: 100vw !important; max-width: none !important; height: 100vh !important; max-height: none !important; margin: 0 !important; border: 0 !important; }
+dialog.fs-lt { position: fixed; inset: 0; }
+dialog.texto:fullscreen .lt-box, dialog.fs-lt .lt-box { max-width: 78ch; margin: 0 auto; padding-top: var(--sp-2); }
+dialog.texto:fullscreen .lt-box p, dialog.fs-lt .lt-box p { max-width: none; }
+dialog.leitura:fullscreen .l-corpo, dialog.leitura.fs-lt .l-corpo { max-width: 78ch; margin-inline: auto; }
+.d-escopo { display: flex; gap: 8px; flex-wrap: wrap; margin: var(--sp-2) 0; }
 </style>
 
 <header class="mast">
@@ -1321,8 +1339,8 @@ dialog.texto.convite-dlg {
   </div>
 </main>
 
-<dialog class="leitura" id="leitura" aria-label="Página do disco"></dialog>
-<dialog class="texto" id="texto" aria-label="Leitura"></dialog>
+<dialog class="leitura" id="leitura" lang="pt-BR" aria-label="Página do disco"></dialog>
+<dialog class="texto" id="texto" lang="pt-BR" aria-label="Leitura"></dialog>
 <dialog class="texto ida-dlg" id="dlg-ida" aria-labelledby="dlg-ida-tit"></dialog>
 <dialog class="texto convite-dlg" id="dlg-convite" aria-labelledby="dlg-convite-tit"></dialog>
 
@@ -1388,7 +1406,7 @@ dialog.texto.convite-dlg {
     },
   };
   const COLS_REV = ["cine_edicoes", "cine_itens", "cine_guias", "livro_edicoes", "livro_itens", "livro_guias", "leituras"];
-  const S = { db: null, uid: null, edicoes: [], itens: [], guias: [], semanas: [], cultura: [], dias: [], cine_edicoes: [], cine_itens: [], cine_guias: [], livro_edicoes: [], livro_itens: [], livro_guias: [], leituras: [], selRev: {}, agenda: null, agQuando: "mes", agOnde: "todos", agTipo: "todos", agQ: "", agAbertos: {}, agRasc: {}, agNota: null, agDispOpen: false, agInfo: {}, agPlInfo: false, agArtistas: {}, agArtistasYT: {}, comentarios: {}, marcasEm: {}, idasMod: {}, idasDel: {}, notasNovas: [], fIda: { ano: String(new Date().getFullYear()), tipo: "todos" }, notaMsg: "", loaded: {}, marcas: {}, aval: {}, avalEm: {}, sel: null, selSem: null, selDia: null, aba: "hoje", filtro: "tudo", podeMarcar: false, falhou: false, noticiasSalvas: {}, filtroSalvas: false };
+  const S = { db: null, uid: null, edicoes: [], itens: [], guias: [], semanas: [], cultura: [], dias: [], cine_edicoes: [], cine_itens: [], cine_guias: [], livro_edicoes: [], livro_itens: [], livro_guias: [], leituras: [], selRev: {}, agenda: null, agQuando: "mes", agOnde: "todos", agTipo: "todos", agQ: "", agAbertos: {}, agRasc: {}, agNota: null, agDispOpen: false, agInfo: {}, agPlInfo: false, agArtistas: {}, agArtistasYT: {}, comentarios: {}, marcasEm: {}, idasMod: {}, idasDel: {}, notasNovas: [], fIda: { ano: String(new Date().getFullYear()), tipo: "todos" }, notaMsg: "", loaded: {}, marcas: {}, aval: {}, avalEm: {}, sel: null, selSem: null, selDia: null, aba: "hoje", filtro: "tudo", podeMarcar: false, falhou: false, noticiasSalvas: {}, filtroSalvas: false, escopo: "tudo" };
   const ABAS = [["hoje", "hoje"], ["noticias", "semana"], ["musica", "música"], ["filmes", "filmes"], ["livros", "livros"], ["agenda", "agenda"], ["arquivo", "arquivo"]];
   const DSEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
@@ -1791,11 +1809,32 @@ dialog.texto.convite-dlg {
       safeUrl(l.url) ? h("a", { class: "lt-orig", href: safeUrl(l.url), target: "_blank", rel: "noopener" }, `Ler o texto completo em ${str(l.fonte) || "site original"} ↗`) : null,
     ];
   }
+  // Tela cheia para o leitor: usa a Fullscreen API e, onde ela não existe (iOS), uma classe que ocupa a janela toda.
+  function emTelaCheia(dlg) { return document.fullscreenElement === dlg || dlg.classList.contains("fs-lt"); }
+  function alternarTelaCheia(dlg) {
+    if (document.fullscreenElement === dlg) { document.exitFullscreen().catch(() => {}); return; }
+    if (dlg.classList.contains("fs-lt")) { dlg.classList.remove("fs-lt"); atualizarBotoesTelaCheia(dlg); return; }
+    const req = dlg.requestFullscreen && dlg.requestFullscreen();
+    if (req && req.catch) req.catch(() => { dlg.classList.add("fs-lt"); atualizarBotoesTelaCheia(dlg); });
+    else if (!req) { dlg.classList.add("fs-lt"); atualizarBotoesTelaCheia(dlg); }
+  }
+  function atualizarBotoesTelaCheia(dlg) {
+    const on = emTelaCheia(dlg);
+    dlg.querySelectorAll(".fs-btn").forEach((b) => { b.textContent = on ? "⤢ Sair da tela cheia" : "⛶ Tela cheia"; b.setAttribute("aria-pressed", String(on)); });
+  }
+  function botaoTelaCheia(dlg) {
+    const b = h("button", { class: "l-btn fs-btn", type: "button", title: "Ler em tela cheia, sem distrações", "aria-pressed": String(emTelaCheia(dlg)), onclick: () => alternarTelaCheia(dlg) }, emTelaCheia(dlg) ? "⤢ Sair da tela cheia" : "⛶ Tela cheia");
+    return b;
+  }
+  document.addEventListener("fullscreenchange", () => { for (const id of ["texto", "leitura"]) { const d = document.getElementById(id); if (d) atualizarBotoesTelaCheia(d); } });
+  for (const id of ["texto", "leitura"]) { const d = document.getElementById(id); if (d) d.addEventListener("close", () => { d.classList.remove("fs-lt"); if (document.fullscreenElement === d) document.exitFullscreen().catch(() => {}); }); }
+
   function abrirTexto(l) {
     const t = document.getElementById("texto");
     t.replaceChildren(h("div", { class: "lt-box" },
       h("div", { class: "lt-bar" }, h("span", { class: "mono" }, l.tipo === "review" ? "Crítica, em resumo" : "A matéria, em resumo"),
-        h("button", { class: "l-btn", type: "button", onclick: () => t.close(), "aria-label": "Fechar" }, "Fechar ×")),
+        h("span", { class: "lt-acoes" }, botaoTelaCheia(t),
+          h("button", { class: "l-btn", type: "button", onclick: () => t.close(), "aria-label": "Fechar" }, "Fechar ×"))),
       ...corpoLeitura(l, true),
       h("p", { class: "lt-aviso mono" }, "Resumo da Faixa Oculta com base no texto original. Para a íntegra, use o link acima.")));
     t.showModal();
@@ -2099,7 +2138,8 @@ dialog.texto.convite-dlg {
     const redesenhar = () => abrirNota(n, d);
     t.replaceChildren(h("div", { class: "lt-box" },
       h("div", { class: "lt-bar" }, h("span", { class: "mono" }, `${str(n.editoria)} · ${d ? rotuloBoletim(d) : "Boletim"}`),
-        h("button", { class: "l-btn", type: "button", onclick: () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); t.close(); }, "aria-label": "Fechar" }, "Fechar ×")),
+        h("span", { class: "lt-acoes" }, botaoTelaCheia(t),
+          h("button", { class: "l-btn", type: "button", onclick: () => { if ("speechSynthesis" in window) speechSynthesis.cancel(); t.close(); }, "aria-label": "Fechar" }, "Fechar ×"))),
       barraControlesLeitor(redesenhar),
       h("h2", { class: "lt-tit" }, str(n.titulo)),
       ...str(n.texto).split("\n\n").filter(Boolean).map((p) => h("p", null, p)),
@@ -2145,8 +2185,19 @@ dialog.texto.convite-dlg {
       itens = Object.values(S.noticiasSalvas || {}).filter((s) => s && s.nota).sort((a, b) => String(b.salvo_em || "").localeCompare(String(a.salvo_em || "")))
         .map((s) => ({ n: s.nota, bol: (s.boletim && s.boletim._id && S.dias.find((x) => x._id === s.boletim._id)) || s.boletim || d, rot: s.rotulo_boletim || "" }));
       if (!itens.length) return [head, h("section", { class: "wrap", style: "padding:40px 0 64px" }, estado("nenhuma matéria salva", "Toque em “🔖 Salvar” numa notícia do boletim para guardá-la aqui. As salvas ficam só neste navegador."))];
-    } else itens = notas.map((n) => ({ n, bol: d, rot: "" }));
+    } else {
+      const ehMundo = (n) => str(n.editoria) === "Mundo";
+      const temMundo = notas.some(ehMundo), temBr = notas.some((n) => !ehMundo(n));
+      if (S.escopo === "mundo" && !temMundo) S.escopo = "tudo";
+      if (S.escopo === "brasil" && !temBr) S.escopo = "tudo";
+      itens = notas.filter((n) => S.escopo === "mundo" ? ehMundo(n) : S.escopo === "brasil" ? !ehMundo(n) : true).map((n) => ({ n, bol: d, rot: "" }));
+    }
+    const nMundo = notas.filter((n) => str(n.editoria) === "Mundo").length;
+    const filtroEscopo = !S.filtroSalvas && nMundo && nMundo < notas.length ? h("div", { class: "d-escopo", role: "group", "aria-label": "Filtrar notícias" },
+      [["tudo", `Tudo (${notas.length})`], ["brasil", `Brasil (${notas.length - nMundo})`], ["mundo", `Mundo (${nMundo})`]].map(([k, t]) =>
+        h("button", { class: "chip", type: "button", "aria-pressed": String(S.escopo === k), onclick: () => { S.escopo = k; render(); } }, t))) : null;
     const grade = h("section", { class: "wrap", style: "padding-bottom:24px" },
+      filtroEscopo,
       S.filtroSalvas ? h("div", { class: "d-salvas-topo" }, h("h3", null, `Suas matérias salvas (${itens.length})`),
         h("button", { class: "d-btn-filtro-salvas mono", type: "button", onclick: () => { S.filtroSalvas = false; render(); } }, "Voltar ao boletim ✕")) : null,
       h("div", { class: "d-notas" }, itens.map(({ n, bol, rot }) => h("article", { class: "d-nota" },
@@ -3656,7 +3707,7 @@ dialog.texto.convite-dlg {
 
     dlg.replaceChildren(
       h("div", { class: "l-bar" }, h("div", { class: "wrap" },
-        h("button", { class: "l-btn", type: "button", onclick: fecharLeitura }, "← Edição"),
+        h("button", { class: "l-btn", type: "button", onclick: fecharLeitura }, "← Edição"), botaoTelaCheia(dlg),
         h("span", { class: "l-ctx mono" }, ctx),
         h("div", { class: "nav-l" },
           h("button", { class: "l-btn", type: "button", disabled: idx === 0, onclick: () => ir(-1), "aria-label": "Disco anterior" }, "←"),
