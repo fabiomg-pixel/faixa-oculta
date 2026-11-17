@@ -1,4 +1,4 @@
-"""Rastreio dos principais jornais internacionais para o quadro "Imprensa internacional" do boletim da manhã.
+"""Rastreio dos principais jornais internacionais para o quadro "Imprensa internacional" (edições da manhã e da noite).
 
 Uso:
   python3 -I tools/imprensa_mundo.py --data AAAA-MM-DD --saida DIR
@@ -35,6 +35,17 @@ JORNAIS = [
     ("Reforma", "México", "es", "https://www.reforma.com/", "mex_ref"),
     ("La Nación", "Argentina", "es", "https://www.lanacion.com.ar/", None),
     ("The Sydney Morning Herald", "Austrália", "en", "https://www.smh.com.au/", None),
+    ("Deutsche Welle", "Alemanha", "en", "https://www.dw.com/en/top-stories/s-9097", None),
+    ("CNN International", "EUA", "en", "https://edition.cnn.com/world", None),
+    ("France 24", "França", "en", "https://www.france24.com/en/", None),
+    ("Euronews", "Europa", "en", "https://www.euronews.com/news/international", None),
+    ("The Hindu", "Índia", "en", "https://www.thehindu.com/news/international/", None),
+    ("The Straits Times", "Singapura", "en", "https://www.straitstimes.com/world", None),
+    ("ABC News Australia", "Austrália", "en", "https://www.abc.net.au/news/world", None),
+    ("The Independent", "Reino Unido", "en", "https://www.independent.co.uk/news/world", None),
+    ("Los Angeles Times", "EUA", "en", "https://www.latimes.com/world-nation", None),
+    ("El Mundo", "Espanha", "es", "https://www.elmundo.es/internacional.html", None),
+    ("La Stampa", "Itália", "it", "https://www.lastampa.it/", None),
 ]
 FF = "https://d2dr22b2lm4tvw.cloudfront.net/{code}/{data}/front-page-large.jpg"
 LIXO = re.compile(r"(newsletter|subscribe|sign in|log in|assine|abonnez|suscr|abonn|cookie|podcast|crossword|wordle|horoscope|games?\b|shop|menu|skip to)", re.I)

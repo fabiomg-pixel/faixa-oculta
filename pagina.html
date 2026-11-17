@@ -1303,6 +1303,7 @@ dialog.leitura:fullscreen .l-corpo, dialog.leitura.fs-lt .l-corpo { max-width: 7
 /* Imprensa internacional */
 .im .im-orig { font-style: italic; color: var(--muted); font-size: var(--fs-xs); line-height: 1.35; }
 .im-grade .pp-capa b { font-size: 16px; }
+.im-aviso { color: var(--muted); font-size: var(--fs-xs); margin-top: var(--sp-2); }
 .im-sub { margin: var(--sp-4) 0 var(--sp-2); color: var(--sec); text-transform: uppercase; letter-spacing: .06em; font-size: var(--fs-xs); }
 </style>
 
@@ -1398,7 +1399,7 @@ dialog.leitura:fullscreen .l-corpo, dialog.leitura.fs-lt .l-corpo { max-width: 7
     },
   };
   const COLS_REV = ["cine_edicoes", "cine_itens", "cine_guias", "livro_edicoes", "livro_itens", "livro_guias", "leituras"];
-  const S = { db: null, uid: null, edicoes: [], itens: [], guias: [], semanas: [], cultura: [], dias: [], cine_edicoes: [], cine_itens: [], cine_guias: [], livro_edicoes: [], livro_itens: [], livro_guias: [], leituras: [], selRev: {}, agenda: null, agQuando: "mes", agOnde: "todos", agTipo: "todos", agQ: "", agAbertos: {}, agRasc: {}, agNota: null, agDispOpen: false, agInfo: {}, agPlInfo: false, agArtistas: {}, agArtistasYT: {}, comentarios: {}, marcasEm: {}, idasMod: {}, idasDel: {}, notasNovas: [], fIda: { ano: String(new Date().getFullYear()), tipo: "todos" }, notaMsg: "", loaded: {}, marcas: {}, aval: {}, avalEm: {}, sel: null, selSem: null, selDia: null, aba: "hoje", filtro: "tudo", podeMarcar: false, falhou: false, noticiasSalvas: {}, filtroSalvas: false, escopo: "tudo" };
+  const S = { db: null, uid: null, edicoes: [], itens: [], guias: [], semanas: [], cultura: [], dias: [], cine_edicoes: [], cine_itens: [], cine_guias: [], livro_edicoes: [], livro_itens: [], livro_guias: [], leituras: [], selRev: {}, agenda: null, agQuando: "mes", agOnde: "todos", agTipo: "todos", agQ: "", agAbertos: {}, agRasc: {}, agNota: null, agDispOpen: false, agInfo: {}, agPlInfo: false, agArtistas: {}, agArtistasYT: {}, comentarios: {}, marcasEm: {}, idasMod: {}, idasDel: {}, notasNovas: [], fIda: { ano: String(new Date().getFullYear()), tipo: "todos" }, notaMsg: "", loaded: {}, marcas: {}, aval: {}, avalEm: {}, sel: null, selSem: null, selDia: null, aba: "hoje", filtro: "tudo", podeMarcar: false, falhou: false, noticiasSalvas: {}, filtroSalvas: false, visao: "nacional" };
   const ABAS = [["hoje", "hoje"], ["noticias", "semana"], ["musica", "música"], ["filmes", "filmes"], ["livros", "livros"], ["agenda", "agenda"], ["arquivo", "arquivo"]];
   const DSEM = ["dom", "seg", "ter", "qua", "qui", "sex", "sáb"];
 
@@ -2166,14 +2167,15 @@ dialog.leitura:fullscreen .l-corpo, dialog.leitura.fs-lt .l-corpo { max-width: 7
   }
 
   // Imprensa internacional: manchetes dos grandes jornais estrangeiros e os temas do dia como eles os cobriram.
-  function blocoImprensaMundo(m, d) {
+  function blocoImprensaMundo(m, d, deOutraEdicao) {
     if (!m || (!arr(m.capas).length && !arr(m.temas).length)) return null;
     const capas = arr(m.capas).filter((c) => c && c.jornal && c.manchete);
     const temas = arr(m.temas).map((t) => Object.assign({ editoria: "Mundo" }, t, { id: "mundo-" + str(t.id || t.titulo) }));
     return h("section", { class: "wrap secao pp im", id: "imprensa-mundo" },
       h("div", { class: "sec-head" }, h("span", { class: "num", "aria-hidden": "true" }, capas.length || temas.length),
-        h("h3", null, "imprensa internacional"),
-        h("p", null, str(m.resumo) || "O que os principais jornais do mundo destacaram e como cada um contou.")),
+        h("h3", null, str(m.titulo) || "imprensa internacional"),
+        h("p", null, str(m.resumo) || "O que os principais jornais do mundo destacaram e como cada um contou."),
+        h("p", { class: "mono im-aviso" }, `Varredura dos grandes jornais estrangeiros${deOutraEdicao ? ` (${d.edicao === "noite" ? "edição da noite" : "edição da manhã"})` : ""}. Manchetes e textos traduzidos para o português; o título original aparece em itálico.`)),
       capas.length ? h("ol", { class: "pp-grade im-grade" }, capas.map((c) => {
         const url = safeUrl(c.url) || safeUrl(c.site), img = safeUrl(c.imagem);
         return h("li", null,
@@ -2219,24 +2221,29 @@ dialog.leitura:fullscreen .l-corpo, dialog.leitura.fs-lt .l-corpo { max-width: 7
         .map((s) => ({ n: s.nota, bol: (s.boletim && s.boletim._id && S.dias.find((x) => x._id === s.boletim._id)) || s.boletim || d, rot: s.rotulo_boletim || "" }));
       if (!itens.length) return [head, h("section", { class: "wrap", style: "padding:40px 0 64px" }, estado("nenhuma matéria salva", "Toque em “🔖 Salvar” numa notícia do boletim para guardá-la aqui. As salvas ficam só neste navegador."))];
     } else {
-      const ehMundo = (n) => str(n.editoria) === "Mundo";
-      const temMundo = notas.some(ehMundo), temBr = notas.some((n) => !ehMundo(n));
-      if (S.escopo === "mundo" && !temMundo) S.escopo = "tudo";
-      if (S.escopo === "brasil" && !temBr) S.escopo = "tudo";
-      itens = notas.filter((n) => S.escopo === "mundo" ? ehMundo(n) : S.escopo === "brasil" ? !ehMundo(n) : true).map((n) => ({ n, bol: d, rot: "" }));
+      itens = notas.map((n) => ({ n, bol: d, rot: "" }));
     }
-    const nMundo = notas.filter((n) => str(n.editoria) === "Mundo").length;
-    const filtroEscopo = !S.filtroSalvas && nMundo && nMundo < notas.length ? h("div", { class: "d-escopo", role: "group", "aria-label": "Filtrar notícias" },
-      [["tudo", `Tudo (${notas.length})`], ["brasil", `Brasil (${notas.length - nMundo})`], ["mundo", `Mundo (${nMundo})`]].map(([k, t]) =>
-        h("button", { class: "chip", type: "button", "aria-pressed": String(S.escopo === k), onclick: () => { S.escopo = k; render(); } }, t))) : null;
+    // Seleção Nacional / Internacional: o lado internacional é o rastreio dos grandes jornais estrangeiros (imprensa_mundo),
+    // da própria edição ou, na falta, de outra edição do mesmo dia.
+    const dm = (d.imprensa_mundo && (arr(d.imprensa_mundo.capas).length || arr(d.imprensa_mundo.temas).length)) ? d
+      : S.dias.filter((x) => str(x.data || x._id).slice(0, 10) === str(d.data || d._id).slice(0, 10) && x.imprensa_mundo && (arr(x.imprensa_mundo.capas).length || arr(x.imprensa_mundo.temas).length))
+        .sort((a, b) => (b.edicao === "noite") - (a.edicao === "noite"))[0] || null;
+    const mm = dm ? dm.imprensa_mundo : null;
+    const nInt = mm ? (arr(mm.temas).length || arr(mm.capas).length) : 0;
+    if (S.visao === "internacional" && !mm) S.visao = "nacional";
+    const verInt = S.visao === "internacional" && !S.filtroSalvas;
+    const seletorVisao = !S.filtroSalvas && mm ? h("div", { class: "d-escopo d-visao", role: "group", "aria-label": "Seleção de notícias" },
+      [["nacional", `Nacional (${notas.length} notas)`], ["internacional", `Internacional (${arr(mm.temas).length} temas · ${arr(mm.capas).length} jornais)`]].map(([k, t]) =>
+        h("button", { class: "chip", type: "button", "aria-pressed": String(S.visao === k), onclick: () => { S.visao = k; render(); } }, t))) : null;
     const grade = h("section", { class: "wrap", style: "padding-bottom:24px" },
-      filtroEscopo,
+      seletorVisao,
       S.filtroSalvas ? h("div", { class: "d-salvas-topo" }, h("h3", null, `Suas matérias salvas (${itens.length})`),
         h("button", { class: "d-btn-filtro-salvas mono", type: "button", onclick: () => { S.filtroSalvas = false; render(); } }, "Voltar ao boletim ✕")) : null,
-      h("div", { class: "d-notas" }, itens.map(({ n, bol, rot }) => cardNota(n, bol, rot, d))));
+      verInt ? null : h("div", { class: "d-notas" }, itens.map(({ n, bol, rot }) => cardNota(n, bol, rot, d))));
     const fim = h("div", { class: "wrap", style: "padding-block:8px 32px" },
       h("button", { class: "ler", type: "button", onclick: () => trocarAba("noticias") }, "A revista da semana: grandes temas, cobertura e vieses"));
-    return [head, grade, blocoCapas(d.capas), blocoImprensaMundo(d.imprensa_mundo, d), blocoJornais(d.jornais), fim];
+    if (verInt) return [head, grade, blocoImprensaMundo(mm, dm, dm !== d), fim];
+    return [head, grade, blocoCapas(d.capas), blocoJornais(d.jornais), fim];
   }
 
   // Front pages of the day (vercapas.com.br): headline transcribed by the morning routine, cover hotlinked, link to the full page.

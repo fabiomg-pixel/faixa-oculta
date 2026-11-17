@@ -11,7 +11,7 @@ O leitor é o Fabio, professor de biofísica na UFRJ, no Rio. Português do Bras
 - **Noite** (rotina das 17h47): doc_id `AAAA-MM-DD-noite`, campo `"edicao": "noite"`, mesmo `data` do dia. O que mudou
   durante o dia: fechamento do mercado, decisões, falas, desdobramentos das notas da manhã. 4 a 7 notas, sem repetir
   nota da manhã que não teve novidade. Leia o boletim da manhã antes de apurar.
-- A página mostra as duas edições do dia, a da noite primeiro ("Boletim da noite").
+- A página mostra as duas edições do dia, a da noite primeiro ("Boletim da noite"). As duas levam também o lado Internacional da aba "hoje" (seção 3c).
 
 ## 1. Ver o que já existe
 - `date` com TZ=America/Sao_Paulo dá a data de hoje (base do doc_id).
@@ -95,23 +95,24 @@ vai atribuído ao veículo ("segundo a Reuters...").
   `capas.json` (as imagens ficam no VerCapas; não suba as capas para o site nem para o artefato).
 - Jornal sem capa na data fica de fora; diga no relatório.
 
-## 3c. Imprensa internacional (só na edição da manhã)
+## 3c. Imprensa internacional (manhã e noite)
 
-Rastreio dos principais jornais do mundo, com o mesmo método usado para a imprensa brasileira: o que cada um destacou e como contou.
+A aba "hoje" tem a seleção **Nacional | Internacional**. O lado Nacional é o boletim com os veículos brasileiros (inclusive as notas de editoria "Mundo", que são o mundo visto pela mídia brasileira). O lado Internacional é este rastreio: os principais jornais do mundo, lidos no original e **traduzidos para o português**, no mesmo formato das notas nacionais (como cada veículo noticiou, análise, fontes e leituras).
 
-1. Rode `python3 -I tools/imprensa_mundo.py --data AAAA-MM-DD --saida <scratchpad>/mundo/rDDMM`. Ele lê as páginas iniciais (curl simples), tira as chamadas e confere as capas impressas públicas do Freedom Forum. O que der 403, captcha, "Client Challenge" ou paywall vai para `sem_acesso.json` e fica de fora; não contorne.
-2. Abra as capas impressas (imagem) e leia a manchete. Para os sites, o destaque é a primeira chamada jornalística da página inicial.
-3. Abra as matérias principais e agrupe 3 a 6 temas que aparecem em vários jornais. Cada tema é uma nota no formato de sempre (texto 90–160 palavras, `como_noticiaram` 60–120 comparando os veículos estrangeiros entre si, `analise` 50–100, `por_que_importa`, `fontes` com `pais`). Paráfrase em português; no máximo uma citação curta.
-4. Se só a manchete de um artigo estiver acessível, diga "(texto não acessível)" no enfoque da fonte e não afirme nada além do título.
-5. Grave em `dias/<data>` o campo:
+1. Rode `python3 -I tools/imprensa_mundo.py --data AAAA-MM-DD --saida <scratchpad>/mundo/rDDMM` (30 jornais, curl simples). O que der 403, captcha, "Client Challenge" ou paywall vai para `sem_acesso.json` e fica de fora; não contorne.
+2. **Capas**: para cada jornal com destaque jornalístico, a primeira chamada jornalística da página inicial (ou a manchete da capa impressa, quando o Freedom Forum tiver a imagem do dia). A `manchete` é a tradução fiel para o português; `original` guarda o título no idioma do jornal. Jornal com só navegação (Corriere, NYT às vezes) fica de fora.
+3. **Temas**: na manhã, 5 a 8 temas que aparecem em vários jornais; na noite, 3 a 6 temas com o que mudou ou é novo, sem repetir a manhã. Abra as matérias e escreva cada tema como nota (texto 90–160 palavras, `como_noticiaram` 60–120 comparando os jornais estrangeiros entre si, `analise` 50–100, `por_que_importa`, `fontes` com `pais`), tudo em português. Pelo menos 2 jornais estrangeiros por tema. Paráfrase; no máximo uma citação curta, traduzida. Só afirme o que está nas páginas abertas.
+4. Se só a manchete de um artigo estiver acessível, escreva "(texto não acessível)" no enfoque da fonte e não afirme nada além do título.
+5. Faça as leituras limpas (em português, 140–260 palavras) das matérias estrangeiras abertas com texto suficiente, com o `url` igual ao da fonte (`tools/LEITURAS.md`).
+6. Grave em `dias/<data>` (manhã) e em `dias/<data>-noite` (noite) o campo:
 
 ```
-"imprensa_mundo": { "resumo": "...", "jornais_lidos": N,
+"imprensa_mundo": { "titulo": "até 70 caracteres, o que dominou", "resumo": "...", "jornais_lidos": N,
   "capas": [{jornal, pais, idioma, manchete (PT), original, url, site, imagem?}],
   "temas": [{id, titulo, texto, como_noticiaram, analise, por_que_importa, fontes:[{fonte, pais, perfil, enfoque, url}]}] }
 ```
 
-O resumo diz quantos jornais foram rastreados e quais ficaram sem acesso. O relatório final informa capas, temas e bloqueios.
+O resumo diz quantos jornais foram rastreados e quais ficaram sem acesso. O relatório final informa capas, temas, leituras e bloqueios, separados em Nacional e Internacional.
 
 ## 4. Publicar
 Siga `tools/PUBLICAR.md` inteiro (ponte com o Radar, exportação, `montar_site.py`, commit "Boletim da manhã de DD/MM" ou "Boletim da noite de DD/MM", push).
