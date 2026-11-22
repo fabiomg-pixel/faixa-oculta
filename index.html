@@ -2184,12 +2184,8 @@ dialog.leitura:fullscreen .l-corpo, dialog.leitura.fs-lt .l-corpo { max-width: 7
     if (!m || (!arr(m.capas).length && !arr(m.temas).length)) return null;
     const capas = arr(m.capas).filter((c) => c && c.jornal && c.manchete);
     const temas = arr(m.temas).map((t) => Object.assign({ editoria: "Mundo" }, t, { id: "mundo-" + str(t.id || t.titulo) }));
-    return h("section", { class: "wrap secao pp im", id: "imprensa-mundo" },
-      h("div", { class: "sec-head" }, h("span", { class: "num", "aria-hidden": "true" }, capas.length || temas.length),
-        h("h3", null, "imprensa internacional"),
-        h("p", null, m.titulo ? [h("b", null, str(m.titulo) + ". "), str(m.resumo)] : (str(m.resumo) || "O que os principais jornais do mundo destacaram e como cada um contou."))),
-      h("p", { class: "mono im-aviso" }, `Varredura dos grandes jornais estrangeiros${deOutraEdicao ? ` (${d.edicao === "noite" ? "edição da noite" : "edição da manhã"})` : ""}. Manchetes e textos traduzidos para o português; o título original aparece em itálico.`),
-      capas.length ? h("ol", { class: "pp-grade im-grade" }, capas.map((c) => {
+    const gradeCapas = capas.length ? [h("h4", { class: "im-sub mono" }, `Manchetes dos jornais estrangeiros (${capas.length})`),
+      h("ol", { class: "pp-grade im-grade" }, capas.map((c) => {
         const url = safeUrl(c.url) || safeUrl(c.site), img = safeUrl(c.imagem);
         return h("li", null,
           h(url ? "a" : "div", { href: url, target: url ? "_blank" : null, rel: url ? "noopener" : null, class: "pp-capa" },
@@ -2197,9 +2193,16 @@ dialog.leitura:fullscreen .l-corpo, dialog.leitura.fs-lt .l-corpo { max-width: 7
             h("span", { class: "pp-jornal mono" }, [str(c.jornal), str(c.pais)].filter(Boolean).join(" · ")),
             h("b", null, str(c.manchete)),
             c.original && c.original !== c.manchete ? h("small", { class: "im-orig", lang: str(c.idioma) || null }, str(c.original)) : null));
-      })) : null,
-      temas.length ? [h("h4", { class: "im-sub mono" }, "Os temas do dia na imprensa estrangeira"),
-        h("div", { class: "d-notas" }, temas.map((t) => cardNota(t, d, "", d)))] : null);
+      }))] : null;
+    // Os temas (notas completas, no mesmo formato das nacionais) vêm primeiro; a grade de manchetes fica depois, como apoio.
+    return h("section", { class: "wrap secao pp im", id: "imprensa-mundo" },
+      h("div", { class: "sec-head" }, h("span", { class: "num", "aria-hidden": "true" }, temas.length || capas.length),
+        h("h3", null, "imprensa internacional"),
+        h("p", null, m.titulo ? [h("b", null, str(m.titulo) + ". "), str(m.resumo)] : (str(m.resumo) || "O que os principais jornais do mundo destacaram e como cada um contou."))),
+      h("p", { class: "mono im-aviso" }, `Varredura dos grandes jornais estrangeiros${deOutraEdicao ? ` (${d.edicao === "noite" ? "edição da noite" : "edição da manhã"})` : ""}. Textos e manchetes traduzidos para o português; o título original aparece em itálico.`),
+      temas.length ? [h("h4", { class: "im-sub mono" }, `Os temas do dia na imprensa estrangeira (${temas.length})`),
+        h("div", { class: "d-notas" }, temas.map((t) => cardNota(t, d, "", d)))] : null,
+      gradeCapas);
   }
 
   function blocoHoje() {
